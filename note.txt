@@ -1,0 +1,4 @@
+Install the EPPlus NuGet package:
+
+Go to Tools > NuGet Package Manager > Manage NuGet Packages for Solution.
+Search for EPPlus and install it.
