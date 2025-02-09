@@ -3,18 +3,17 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 
 namespace Suvella
 {
     public partial class Form1 : Form
     {
-        // List to hold items and prices
         List<string> items = new List<string>();
         List<decimal> prices = new List<decimal>();
-
-        // List to hold customer data
         List<Customer> customers = new List<Customer>();
+        Order currentOrder;
 
         public Form1()
         {
@@ -23,26 +22,54 @@ namespace Suvella
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            // File paths for the menu and customer Excel sheets
             string menuFilePath = "menu.xlsx";
             string customerFilePath = "customers.xlsx";
 
             try
             {
-                // Load menu data
                 LoadMenuData(menuFilePath);
-
-                // Load customer data
                 LoadCustomerData(customerFilePath);
-
-                // Set up AutoComplete for customer name in the TextBox
                 SetUpCustomerAutoComplete();
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error loading data: " + ex.Message);
             }
+
+            InitializeCurrentOrder();
         }
+
+        private void InitializeCurrentOrder()
+        {
+            // Ensure the currentOrder is initialized
+            Customer customer = new Customer
+            {
+                Name = textBoxCustomerName.Text,
+                Address = textBoxCustomerAddress.Text,
+                Phone = textBoxCustomerPhone.Text
+            };
+
+            // Initialize currentOrder with the Customer object
+            currentOrder = new Order(customer)
+            {
+                // Initialize other properties of the currentOrder
+                OrderItems = new List<OrderItem>(),  // Empty list for order items initially
+                ShippingAddress = string.Empty,  // Empty string for Shipping Address
+                ShippingMethod = string.Empty,  // Empty string for Shipping Method
+                Note = string.Empty,  // Empty string for Note
+                Feedback = "Not Yet",  // Default feedback
+                PaymentStatus = "Unpaid",  // Default payment status
+                OrderStatus = "Processing",  // Default order status
+                Discount = 0,  // Default discount amount
+                ShippingFee = 0,  // Default shipping fee
+                FinalPayment = 0,  // Default final price
+                OrderTime = DateTime.Now,  // Set the order time to now
+                ShippingTime = dateTimePickerShip.Value  // Shipping time from dateTimePicker
+            };
+        }
+
+
+
 
         private void LoadMenuData(string filePath)
         {
@@ -188,10 +215,11 @@ namespace Suvella
                     // Display selected customer details
                     textBoxCustomerPhone.Text = selectedCustomer.Phone;
                     textBoxCustomerAddress.Text = selectedCustomer.Address;
+                    textBoxShippingAddress.Text = selectedCustomer.Address;
+                    currentOrder = new Order(selectedCustomer); // Initialize with the selected customer
                 }
             }
         }
-
 
         // Event handler to update price when an item is selected
         private void comboBoxItems_SelectedIndexChanged(object sender, EventArgs e)
@@ -239,6 +267,231 @@ namespace Suvella
                     textBoxPrice.Text = totalPrice.ToString();
                 }
             }
+        }
+
+        private void buttonAddItem_Click(object sender, EventArgs e)
+        {
+            // Get the selected item from the comboBox
+            string selectedItem = comboBoxItems.SelectedItem.ToString();
+            int quantity;
+            if (!int.TryParse(textBoxQuantity.Text, out quantity) || quantity <= 0)
+            {
+                MessageBox.Show("Please enter a valid quantity.");
+                return;
+            }
+
+            // Find the price of the selected item
+            int itemIndex = items.IndexOf(selectedItem);
+            decimal itemPrice = prices[itemIndex];
+
+            // Create a new order item and add it to the current order
+            OrderItem newItem = new OrderItem
+            {
+                ItemName = selectedItem,
+                Price = itemPrice,
+                Quantity = quantity
+            };
+
+            currentOrder.OrderItems.Add(newItem);
+
+            // Update the order items display
+            listBoxOrderItems.Items.Clear();
+            foreach (var item in currentOrder.OrderItems)
+            {
+                listBoxOrderItems.Items.Add($"{item.ItemName} - {item.Quantity} x {item.Price:N0} = {item.TotalPrice:N0}");
+            }
+            UpdateOrderSummary();
+        }
+        private void textBoxShipFee_TextChanged(object sender, EventArgs e)
+        {
+            UpdateOrderSummary();
+        }
+
+        private void textBoxDiscount_TextChanged(object sender, EventArgs e)
+        {
+            UpdateOrderSummary();
+        }
+
+        private void UpdateOrderSummary()
+        {
+            decimal shippingFee = 0;
+            decimal discount = 0;
+
+            bool isValidShippingFee = decimal.TryParse(textBoxShipFee.Text, out shippingFee);
+            bool isValidDiscount = decimal.TryParse(textBoxDiscount.Text, out discount);
+
+            if (isValidShippingFee && isValidDiscount)
+            {
+                currentOrder.ShippingFee = shippingFee;
+                currentOrder.Discount = (discount / 100) * currentOrder.TotalPrice;
+            }
+            else
+            {
+                // Handle invalid input for shipping fee or discount
+                MessageBox.Show("Please enter valid values for shipping fee and discount.");
+                return;  // Exit early if input is invalid
+            }
+
+            currentOrder.FinalPayment = currentOrder.TotalPrice + currentOrder.ShippingFee - currentOrder.Discount;
+            
+            richTextBoxToPay.Clear();
+            richTextBoxToPay.AppendText($"Total: +{currentOrder.TotalPrice:N0}\n");
+            richTextBoxToPay.AppendText($"Discount: -{currentOrder.Discount:N0}\n");
+            richTextBoxToPay.AppendText($"Shipping: +{currentOrder.ShippingFee:N0}\n");
+            richTextBoxToPay.AppendText($"-------------------\n");
+            richTextBoxToPay.AppendText($"Final: {currentOrder.FinalPayment:N0}");
+        }
+
+        private void buttonAdd_Click(object sender, EventArgs e)
+        {
+            // Try to get the current quantity from the TextBox
+            int currentQuantity = 0;
+
+            // Check if the current value in textBoxQuantity is a valid number
+            if (int.TryParse(textBoxQuantity.Text, out currentQuantity))
+            {
+                currentQuantity++;  // Increment the quantity by 1
+                textBoxQuantity.Text = currentQuantity.ToString();  // Update the TextBox with the new value
+            }
+            else
+            {
+                // Handle invalid input if necessary
+                MessageBox.Show("Please enter a valid quantity.");
+            }
+        }
+
+        private void buttonMinus_Click(object sender, EventArgs e)
+        {
+            int currentQuantity = 0;
+
+            if (int.TryParse(textBoxQuantity.Text, out currentQuantity))
+            {
+                if (currentQuantity > 0)  // Ensure quantity doesn't go below 0
+                {
+                    currentQuantity--;  // Decrement the quantity by 1
+                    textBoxQuantity.Text = currentQuantity.ToString();  // Update the TextBox with the new value
+                }
+                else
+                {
+                    MessageBox.Show("Quantity cannot be less than 0.");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please enter a valid quantity.");
+            }
+        }
+
+        private void buttonSaveOrder_Click(object sender, EventArgs e)
+        {
+            completeCurrentOrder();
+            saveToFile();   
+        }
+
+        private void completeCurrentOrder()
+        {
+            currentOrder.Customer.Name = textBoxCustomerName.Text;
+            currentOrder.Customer.Phone = textBoxCustomerPhone.Text;
+            currentOrder.Customer.Address = textBoxCustomerAddress.Text;
+            currentOrder.ShippingAddress = textBoxShippingAddress.Text;
+            currentOrder.Note = richTextBoxNote.Text;
+            currentOrder.ShippingTime = dateTimePickerShip.Value;
+            currentOrder.OrderTime = DateTime.Now;
+        }
+
+        private void saveToFile()
+        {
+            string filePath = "orders.xlsx";  // Make sure to adjust the path
+
+            FileInfo fileInfo = new FileInfo(filePath);
+
+            using (var package = new ExcelPackage(fileInfo))
+            {
+                ExcelWorksheet worksheet;
+
+                // Check if the file exists, otherwise create a new worksheet with proper headers
+                if (fileInfo.Exists)
+                {
+                    worksheet = package.Workbook.Worksheets[0];
+                }
+                else
+                {
+                    worksheet = package.Workbook.Worksheets.Add("Orders");
+
+                    // Set headers for the columns
+                    worksheet.Cells[1, 1].Value = "Name";
+                    worksheet.Cells[1, 2].Value = "Phone";
+                    worksheet.Cells[1, 3].Value = "Address";
+                    worksheet.Cells[1, 4].Value = "Items"; // Replaced Item Name and Item Quantity with a single "Items" column
+                    worksheet.Cells[1, 5].Value = "Shipping Address";
+                    worksheet.Cells[1, 6].Value = "Shipping Time";
+                    worksheet.Cells[1, 7].Value = "Payment";
+                    worksheet.Cells[1, 8].Value = "Payment Status";
+                    worksheet.Cells[1, 9].Value = "Order Status";
+                    worksheet.Cells[1, 10].Value = "Feedback";
+                    worksheet.Cells[1, 11].Value = "Order Note";
+                    worksheet.Cells[1, 12].Value = "Discount";
+                    worksheet.Cells[1, 13].Value = "Order Time"; // Added Order Time column
+                }
+
+                // Get the last row number to append the new order data
+                int lastRow = worksheet.Dimension?.End.Row ?? 1;
+                int row = lastRow + 1;
+
+                // Fill individual cells with relevant information
+                // Customer Info
+                worksheet.Cells[row, 1].Value = currentOrder.Customer.Name;  // Customer Name
+                worksheet.Cells[row, 2].Value = currentOrder.Customer.Phone; // Customer Phone
+                worksheet.Cells[row, 3].Value = currentOrder.Customer.Address; // Customer Address
+
+                // Items: Combine Item Name and Quantity in a single column
+                StringBuilder itemsInfo = new StringBuilder();
+                foreach (var item in currentOrder.OrderItems)
+                {
+                    itemsInfo.AppendLine($"{item.ItemName}: {item.Quantity}");
+                }
+                worksheet.Cells[row, 4].Value = itemsInfo.ToString();  // Items Column
+
+                // Shipping Info
+                worksheet.Cells[row, 5].Value = currentOrder.ShippingAddress;  // Shipping Address
+                worksheet.Cells[row, 6].Value = currentOrder.OrderTime.ToString("yyyy-MM-dd HH:mm");  // Shipping Time (Order Time)
+
+                // Payment Info
+                worksheet.Cells[row, 7].Value = currentOrder.FinalPayment;  // Total Payment
+                worksheet.Cells[row, 8].Value = currentOrder.PaymentStatus;  // Payment Status
+
+                // Order Status
+                worksheet.Cells[row, 9].Value = currentOrder.OrderStatus;  // Order Status
+
+                // Feedback
+                worksheet.Cells[row, 10].Value = currentOrder.Feedback ?? "Not Provided";  // Feedback (or placeholder)
+
+                // Order Note
+                worksheet.Cells[row, 11].Value = currentOrder.Note;  // Order Note
+
+                // Discount
+                worksheet.Cells[row, 12].Value = currentOrder.Discount.ToString();  // Discount Amount
+
+                // Order Time
+                worksheet.Cells[row, 13].Value = currentOrder.OrderTime.ToString("yyyy-MM-dd HH:mm");  // Order Time
+
+                // Save the changes to the file
+                package.Save();
+
+                MessageBox.Show("Order saved successfully!");
+            }
+        }
+        private void buttonRemoveOrder_Click(object sender, EventArgs e)
+        {
+            InitializeCurrentOrder();
+            
+            listBoxOrderItems.Items.Clear();  // Clear displayed items
+            // Optionally, clear other fields as needed
+            textBoxQuantity.Text = "1";
+            textBoxPrice.Clear();
+            richTextBoxToPay.Clear();
+
+            MessageBox.Show("Order removed successfully!");
         }
     }
 }
