@@ -37,7 +37,28 @@ namespace Suvella
             }
 
             InitializeCurrentOrder();
+            ConfigureDataGridView();
         }
+
+        private void ConfigureDataGridView()
+        {
+            // Set column headers
+            dataGridViewOrder.Columns.Clear();  // Clear existing columns first (if any)
+
+            dataGridViewOrder.Columns.Add("OrderID", "Order ID");
+            dataGridViewOrder.Columns.Add("CustomerName", "Customer Name");
+            dataGridViewOrder.Columns.Add("OrderTime", "Order Time");
+            dataGridViewOrder.Columns.Add("TotalPrice", "Total Price");
+            dataGridViewOrder.Columns.Add("PaymentStatus", "Payment Status");
+            dataGridViewOrder.Columns.Add("OrderStatus", "Order Status");
+            dataGridViewOrder.Columns.Add("Discount", "Discount");
+
+            // Enable automatic column sizing
+            dataGridViewOrder.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewOrder.SelectionMode = DataGridViewSelectionMode.FullRowSelect;  // Allow row selection
+            dataGridViewOrder.ReadOnly = true;  // Make the grid read-only (optional, based on your needs)
+        }
+
 
         private void InitializeCurrentOrder()
         {
@@ -392,9 +413,9 @@ namespace Suvella
             currentOrder.Note = richTextBoxNote.Text;
             currentOrder.ShippingTime = dateTimePickerShip.Value;
             currentOrder.OrderTime = DateTime.Now;
-            currentOrder.Feedback = "Not Yet";  
-            currentOrder.PaymentStatus = "Unpaid"; 
-            currentOrder.OrderStatus = "Processing"; 
+            currentOrder.Feedback = "Not Yet";
+            currentOrder.PaymentStatus = "Unpaid";
+            currentOrder.OrderStatus = "Processing";
         }
 
         private void saveToFile()
@@ -528,6 +549,11 @@ namespace Suvella
                 MessageBox.Show("Saved a new customer to customers.xlsx file.");
 
             }
+        }
+
+        private void buttonLoadOrders_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

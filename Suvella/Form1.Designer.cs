@@ -52,7 +52,6 @@
             richTextBoxToPay = new RichTextBox();
             buttonSaveOrder = new Button();
             buttonRemoveOrder = new Button();
-            groupBox3 = new GroupBox();
             label1 = new Label();
             comboBoxItems = new ComboBox();
             groupBox1 = new GroupBox();
@@ -63,13 +62,23 @@
             label3 = new Label();
             textBoxPrice = new TextBox();
             label2 = new Label();
+            tabControl1 = new TabControl();
+            tabPage1 = new TabPage();
+            groupBox3 = new GroupBox();
+            tabPage2 = new TabPage();
+            dataGridViewOrder = new DataGridView();
+            buttonLoadOrders = new Button();
             groupBox2.SuspendLayout();
             groupBox1.SuspendLayout();
+            tabControl1.SuspendLayout();
+            tabPage1.SuspendLayout();
+            tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewOrder).BeginInit();
             SuspendLayout();
             // 
             // dateTimePickerShip
             // 
-            dateTimePickerShip.Location = new Point(1151, 749);
+            dateTimePickerShip.Location = new Point(1191, 746);
             dateTimePickerShip.Name = "dateTimePickerShip";
             dateTimePickerShip.Size = new Size(500, 47);
             dateTimePickerShip.TabIndex = 9;
@@ -78,7 +87,7 @@
             // 
             label5.AutoSize = true;
             label5.BackColor = Color.CadetBlue;
-            label5.Location = new Point(921, 749);
+            label5.Location = new Point(961, 746);
             label5.Name = "label5";
             label5.Size = new Size(209, 41);
             label5.TabIndex = 11;
@@ -86,7 +95,7 @@
             // 
             // richTextBoxNote
             // 
-            richTextBoxNote.Location = new Point(914, 861);
+            richTextBoxNote.Location = new Point(954, 858);
             richTextBoxNote.Name = "richTextBoxNote";
             richTextBoxNote.Size = new Size(843, 117);
             richTextBoxNote.TabIndex = 12;
@@ -96,7 +105,7 @@
             // 
             label6.AutoSize = true;
             label6.BackColor = Color.CadetBlue;
-            label6.Location = new Point(914, 817);
+            label6.Location = new Point(956, 814);
             label6.Name = "label6";
             label6.Size = new Size(84, 41);
             label6.TabIndex = 13;
@@ -128,7 +137,7 @@
             // 
             listBoxCustomerSuggestions.FormattingEnabled = true;
             listBoxCustomerSuggestions.ItemHeight = 41;
-            listBoxCustomerSuggestions.Location = new Point(34, 737);
+            listBoxCustomerSuggestions.Location = new Point(34, 749);
             listBoxCustomerSuggestions.Name = "listBoxCustomerSuggestions";
             listBoxCustomerSuggestions.Size = new Size(838, 332);
             listBoxCustomerSuggestions.TabIndex = 18;
@@ -144,7 +153,7 @@
             groupBox2.Controls.Add(label7);
             groupBox2.Controls.Add(textBoxCustomerAddress);
             groupBox2.Controls.Add(textBoxCustomerName);
-            groupBox2.Location = new Point(15, 440);
+            groupBox2.Location = new Point(15, 452);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(871, 662);
             groupBox2.TabIndex = 19;
@@ -193,7 +202,7 @@
             // 
             listBoxOrderItems.FormattingEnabled = true;
             listBoxOrderItems.ItemHeight = 41;
-            listBoxOrderItems.Location = new Point(916, 83);
+            listBoxOrderItems.Location = new Point(956, 80);
             listBoxOrderItems.Name = "listBoxOrderItems";
             listBoxOrderItems.Size = new Size(843, 332);
             listBoxOrderItems.TabIndex = 20;
@@ -202,7 +211,7 @@
             // 
             label10.AutoSize = true;
             label10.BackColor = Color.CadetBlue;
-            label10.Location = new Point(914, 516);
+            label10.Location = new Point(954, 513);
             label10.Name = "label10";
             label10.Size = new Size(191, 41);
             label10.TabIndex = 24;
@@ -210,7 +219,7 @@
             // 
             // textBoxShipFee
             // 
-            textBoxShipFee.Location = new Point(1111, 510);
+            textBoxShipFee.Location = new Point(1151, 507);
             textBoxShipFee.Name = "textBoxShipFee";
             textBoxShipFee.Size = new Size(179, 47);
             textBoxShipFee.TabIndex = 23;
@@ -221,7 +230,7 @@
             // 
             label11.AutoSize = true;
             label11.BackColor = Color.CadetBlue;
-            label11.Location = new Point(914, 631);
+            label11.Location = new Point(954, 628);
             label11.Name = "label11";
             label11.Size = new Size(251, 41);
             label11.TabIndex = 26;
@@ -229,7 +238,7 @@
             // 
             // textBoxShippingAddress
             // 
-            textBoxShippingAddress.Location = new Point(918, 675);
+            textBoxShippingAddress.Location = new Point(958, 672);
             textBoxShippingAddress.Name = "textBoxShippingAddress";
             textBoxShippingAddress.Size = new Size(842, 47);
             textBoxShippingAddress.TabIndex = 25;
@@ -238,7 +247,7 @@
             // 
             label12.AutoSize = true;
             label12.BackColor = Color.CadetBlue;
-            label12.Location = new Point(918, 452);
+            label12.Location = new Point(1010, 449);
             label12.Name = "label12";
             label12.Size = new Size(135, 41);
             label12.TabIndex = 28;
@@ -246,7 +255,7 @@
             // 
             // textBoxDiscount
             // 
-            textBoxDiscount.Location = new Point(1115, 446);
+            textBoxDiscount.Location = new Point(1155, 443);
             textBoxDiscount.Name = "textBoxDiscount";
             textBoxDiscount.Size = new Size(102, 47);
             textBoxDiscount.TabIndex = 27;
@@ -257,7 +266,7 @@
             // 
             label13.AutoSize = true;
             label13.BackColor = Color.CadetBlue;
-            label13.Location = new Point(1237, 446);
+            label13.Location = new Point(1277, 443);
             label13.Name = "label13";
             label13.Size = new Size(43, 41);
             label13.TabIndex = 29;
@@ -265,7 +274,7 @@
             // 
             // richTextBoxToPay
             // 
-            richTextBoxToPay.Location = new Point(1325, 425);
+            richTextBoxToPay.Location = new Point(1365, 422);
             richTextBoxToPay.Name = "richTextBoxToPay";
             richTextBoxToPay.Size = new Size(434, 225);
             richTextBoxToPay.TabIndex = 30;
@@ -274,7 +283,7 @@
             // buttonSaveOrder
             // 
             buttonSaveOrder.BackColor = Color.Lime;
-            buttonSaveOrder.Location = new Point(1038, 1023);
+            buttonSaveOrder.Location = new Point(1078, 1020);
             buttonSaveOrder.Name = "buttonSaveOrder";
             buttonSaveOrder.Size = new Size(188, 58);
             buttonSaveOrder.TabIndex = 31;
@@ -285,7 +294,7 @@
             // buttonRemoveOrder
             // 
             buttonRemoveOrder.BackColor = Color.LightCoral;
-            buttonRemoveOrder.Location = new Point(1430, 1021);
+            buttonRemoveOrder.Location = new Point(1470, 1018);
             buttonRemoveOrder.Name = "buttonRemoveOrder";
             buttonRemoveOrder.Size = new Size(235, 58);
             buttonRemoveOrder.TabIndex = 32;
@@ -293,21 +302,11 @@
             buttonRemoveOrder.UseVisualStyleBackColor = false;
             buttonRemoveOrder.Click += buttonRemoveOrder_Click;
             // 
-            // groupBox3
-            // 
-            groupBox3.BackColor = Color.CadetBlue;
-            groupBox3.Location = new Point(896, 27);
-            groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(886, 1075);
-            groupBox3.TabIndex = 33;
-            groupBox3.TabStop = false;
-            groupBox3.Text = "Order";
-            // 
             // label1
             // 
             label1.AutoSize = true;
             label1.BackColor = Color.LightBlue;
-            label1.Location = new Point(33, 80);
+            label1.Location = new Point(34, 76);
             label1.Name = "label1";
             label1.Size = new Size(78, 41);
             label1.TabIndex = 35;
@@ -316,7 +315,7 @@
             // comboBoxItems
             // 
             comboBoxItems.FormattingEnabled = true;
-            comboBoxItems.Location = new Point(29, 124);
+            comboBoxItems.Location = new Point(30, 120);
             comboBoxItems.Name = "comboBoxItems";
             comboBoxItems.Size = new Size(841, 49);
             comboBoxItems.TabIndex = 34;
@@ -332,7 +331,7 @@
             groupBox1.Controls.Add(label3);
             groupBox1.Controls.Add(textBoxPrice);
             groupBox1.Controls.Add(label2);
-            groupBox1.Location = new Point(14, 27);
+            groupBox1.Location = new Point(15, 23);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(871, 388);
             groupBox1.TabIndex = 36;
@@ -404,32 +403,94 @@
             label2.TabIndex = 4;
             label2.Text = "Price";
             // 
+            // tabControl1
+            // 
+            tabControl1.Controls.Add(tabPage1);
+            tabControl1.Controls.Add(tabPage2);
+            tabControl1.Location = new Point(0, 1);
+            tabControl1.Name = "tabControl1";
+            tabControl1.SelectedIndex = 0;
+            tabControl1.Size = new Size(1940, 1213);
+            tabControl1.TabIndex = 37;
+            // 
+            // tabPage1
+            // 
+            tabPage1.Controls.Add(listBoxCustomerSuggestions);
+            tabPage1.Controls.Add(label1);
+            tabPage1.Controls.Add(groupBox2);
+            tabPage1.Controls.Add(listBoxOrderItems);
+            tabPage1.Controls.Add(comboBoxItems);
+            tabPage1.Controls.Add(dateTimePickerShip);
+            tabPage1.Controls.Add(groupBox1);
+            tabPage1.Controls.Add(label5);
+            tabPage1.Controls.Add(label6);
+            tabPage1.Controls.Add(label12);
+            tabPage1.Controls.Add(buttonRemoveOrder);
+            tabPage1.Controls.Add(richTextBoxNote);
+            tabPage1.Controls.Add(buttonSaveOrder);
+            tabPage1.Controls.Add(textBoxShipFee);
+            tabPage1.Controls.Add(richTextBoxToPay);
+            tabPage1.Controls.Add(label10);
+            tabPage1.Controls.Add(label13);
+            tabPage1.Controls.Add(textBoxShippingAddress);
+            tabPage1.Controls.Add(label11);
+            tabPage1.Controls.Add(textBoxDiscount);
+            tabPage1.Controls.Add(groupBox3);
+            tabPage1.Location = new Point(10, 58);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Padding = new Padding(3);
+            tabPage1.Size = new Size(1920, 1145);
+            tabPage1.TabIndex = 0;
+            tabPage1.Text = "Place Order";
+            tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // groupBox3
+            // 
+            groupBox3.BackColor = Color.CadetBlue;
+            groupBox3.Location = new Point(913, 23);
+            groupBox3.Name = "groupBox3";
+            groupBox3.Size = new Size(929, 1094);
+            groupBox3.TabIndex = 37;
+            groupBox3.TabStop = false;
+            groupBox3.Text = "Order";
+            // 
+            // tabPage2
+            // 
+            tabPage2.Controls.Add(buttonLoadOrders);
+            tabPage2.Controls.Add(dataGridViewOrder);
+            tabPage2.Location = new Point(10, 58);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(1920, 1145);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "Manage Order";
+            tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // dataGridViewOrder
+            // 
+            dataGridViewOrder.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewOrder.Location = new Point(3, 674);
+            dataGridViewOrder.Name = "dataGridViewOrder";
+            dataGridViewOrder.RowHeadersWidth = 102;
+            dataGridViewOrder.Size = new Size(1874, 465);
+            dataGridViewOrder.TabIndex = 0;
+            // 
+            // buttonLoadOrders
+            // 
+            buttonLoadOrders.Location = new Point(32, 591);
+            buttonLoadOrders.Name = "buttonLoadOrders";
+            buttonLoadOrders.Size = new Size(251, 58);
+            buttonLoadOrders.TabIndex = 1;
+            buttonLoadOrders.Text = "Load Orders";
+            buttonLoadOrders.UseVisualStyleBackColor = true;
+            buttonLoadOrders.Click += buttonLoadOrders_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(17F, 41F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1804, 1116);
-            Controls.Add(label1);
-            Controls.Add(comboBoxItems);
-            Controls.Add(groupBox1);
-            Controls.Add(buttonRemoveOrder);
-            Controls.Add(buttonSaveOrder);
-            Controls.Add(richTextBoxToPay);
-            Controls.Add(label13);
-            Controls.Add(label12);
-            Controls.Add(textBoxDiscount);
-            Controls.Add(label11);
-            Controls.Add(textBoxShippingAddress);
-            Controls.Add(label10);
-            Controls.Add(textBoxShipFee);
-            Controls.Add(listBoxOrderItems);
-            Controls.Add(label6);
-            Controls.Add(listBoxCustomerSuggestions);
-            Controls.Add(richTextBoxNote);
-            Controls.Add(label5);
-            Controls.Add(dateTimePickerShip);
-            Controls.Add(groupBox2);
-            Controls.Add(groupBox3);
+            ClientSize = new Size(1899, 1289);
+            Controls.Add(tabControl1);
             Name = "Form1";
             Text = "Suvella";
             Load += Form1_Load;
@@ -437,8 +498,12 @@
             groupBox2.PerformLayout();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
+            tabControl1.ResumeLayout(false);
+            tabPage1.ResumeLayout(false);
+            tabPage1.PerformLayout();
+            tabPage2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dataGridViewOrder).EndInit();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
@@ -465,7 +530,6 @@
         private RichTextBox richTextBoxToPay;
         private Button buttonSaveOrder;
         private Button buttonRemoveOrder;
-        private GroupBox groupBox3;
         private Label label1;
         private ComboBox comboBoxItems;
         private GroupBox groupBox1;
@@ -477,5 +541,11 @@
         private TextBox textBoxPrice;
         private Label label2;
         private Button buttonSaveNewCustomer;
+        private TabControl tabControl1;
+        private TabPage tabPage1;
+        private TabPage tabPage2;
+        private GroupBox groupBox3;
+        private DataGridView dataGridViewOrder;
+        private Button buttonLoadOrders;
     }
 }

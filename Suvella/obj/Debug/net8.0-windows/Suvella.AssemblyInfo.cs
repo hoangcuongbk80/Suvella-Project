@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Suvella")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1c7648338f5a03abb64b8e1d0f239469be547aac")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+14051b36a0aa182f56b1dc77c60781a570f5e636")]
 [assembly: System.Reflection.AssemblyProductAttribute("Suvella")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Suvella")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
