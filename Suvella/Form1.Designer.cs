@@ -28,25 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            comboBoxItems = new ComboBox();
-            label1 = new Label();
-            label2 = new Label();
-            textBoxPrice = new TextBox();
-            label3 = new Label();
-            textBoxQuantity = new TextBox();
             dateTimePickerShip = new DateTimePicker();
             label5 = new Label();
             richTextBoxNote = new RichTextBox();
             label6 = new Label();
-            groupBox1 = new GroupBox();
-            buttonMinus = new Button();
-            buttonAdd = new Button();
-            buttonAddItem = new Button();
             textBoxCustomerName = new TextBox();
             textBoxCustomerPhone = new TextBox();
             textBoxCustomerAddress = new TextBox();
             listBoxCustomerSuggestions = new ListBox();
             groupBox2 = new GroupBox();
+            buttonSaveNewCustomer = new Button();
             label9 = new Label();
             label8 = new Label();
             label7 = new Label();
@@ -62,62 +53,19 @@
             buttonSaveOrder = new Button();
             buttonRemoveOrder = new Button();
             groupBox3 = new GroupBox();
-            groupBox1.SuspendLayout();
+            label1 = new Label();
+            comboBoxItems = new ComboBox();
+            groupBox1 = new GroupBox();
+            buttonMinus = new Button();
+            buttonAdd = new Button();
+            buttonAddItem = new Button();
+            textBoxQuantity = new TextBox();
+            label3 = new Label();
+            textBoxPrice = new TextBox();
+            label2 = new Label();
             groupBox2.SuspendLayout();
+            groupBox1.SuspendLayout();
             SuspendLayout();
-            // 
-            // comboBoxItems
-            // 
-            comboBoxItems.FormattingEnabled = true;
-            comboBoxItems.Location = new Point(21, 809);
-            comboBoxItems.Name = "comboBoxItems";
-            comboBoxItems.Size = new Size(841, 49);
-            comboBoxItems.TabIndex = 1;
-            comboBoxItems.SelectedIndexChanged += comboBoxItems_SelectedIndexChanged;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.BackColor = Color.LightBlue;
-            label1.Location = new Point(25, 765);
-            label1.Name = "label1";
-            label1.Size = new Size(78, 41);
-            label1.TabIndex = 3;
-            label1.Text = "Item";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(252, 156);
-            label2.Name = "label2";
-            label2.Size = new Size(82, 41);
-            label2.TabIndex = 4;
-            label2.Text = "Price";
-            // 
-            // textBoxPrice
-            // 
-            textBoxPrice.Location = new Point(252, 200);
-            textBoxPrice.Name = "textBoxPrice";
-            textBoxPrice.Size = new Size(277, 47);
-            textBoxPrice.TabIndex = 5;
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(575, 156);
-            label3.Name = "label3";
-            label3.Size = new Size(132, 41);
-            label3.TabIndex = 6;
-            label3.Text = "Quantity";
-            // 
-            // textBoxQuantity
-            // 
-            textBoxQuantity.Location = new Point(575, 200);
-            textBoxQuantity.Name = "textBoxQuantity";
-            textBoxQuantity.Size = new Size(162, 47);
-            textBoxQuantity.TabIndex = 7;
-            textBoxQuantity.Text = "1";
-            textBoxQuantity.TextChanged += textBoxQuantity_TextChanged;
             // 
             // dateTimePickerShip
             // 
@@ -154,54 +102,6 @@
             label6.TabIndex = 13;
             label6.Text = "Note";
             // 
-            // groupBox1
-            // 
-            groupBox1.BackColor = Color.LightBlue;
-            groupBox1.Controls.Add(buttonMinus);
-            groupBox1.Controls.Add(buttonAdd);
-            groupBox1.Controls.Add(buttonAddItem);
-            groupBox1.Controls.Add(textBoxQuantity);
-            groupBox1.Controls.Add(label3);
-            groupBox1.Controls.Add(textBoxPrice);
-            groupBox1.Controls.Add(label2);
-            groupBox1.Location = new Point(6, 731);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(871, 371);
-            groupBox1.TabIndex = 14;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "Menu";
-            // 
-            // buttonMinus
-            // 
-            buttonMinus.Location = new Point(802, 200);
-            buttonMinus.Name = "buttonMinus";
-            buttonMinus.Size = new Size(53, 47);
-            buttonMinus.TabIndex = 10;
-            buttonMinus.Text = "-";
-            buttonMinus.UseVisualStyleBackColor = true;
-            buttonMinus.Click += buttonMinus_Click;
-            // 
-            // buttonAdd
-            // 
-            buttonAdd.Location = new Point(743, 200);
-            buttonAdd.Name = "buttonAdd";
-            buttonAdd.Size = new Size(53, 47);
-            buttonAdd.TabIndex = 9;
-            buttonAdd.Text = "+";
-            buttonAdd.UseVisualStyleBackColor = true;
-            buttonAdd.Click += buttonAdd_Click;
-            // 
-            // buttonAddItem
-            // 
-            buttonAddItem.BackColor = Color.BurlyWood;
-            buttonAddItem.Location = new Point(667, 292);
-            buttonAddItem.Name = "buttonAddItem";
-            buttonAddItem.Size = new Size(188, 58);
-            buttonAddItem.TabIndex = 8;
-            buttonAddItem.Text = "Add";
-            buttonAddItem.UseVisualStyleBackColor = false;
-            buttonAddItem.Click += buttonAddItem_Click;
-            // 
             // textBoxCustomerName
             // 
             textBoxCustomerName.Location = new Point(19, 100);
@@ -228,7 +128,7 @@
             // 
             listBoxCustomerSuggestions.FormattingEnabled = true;
             listBoxCustomerSuggestions.ItemHeight = 41;
-            listBoxCustomerSuggestions.Location = new Point(24, 324);
+            listBoxCustomerSuggestions.Location = new Point(34, 737);
             listBoxCustomerSuggestions.Name = "listBoxCustomerSuggestions";
             listBoxCustomerSuggestions.Size = new Size(838, 332);
             listBoxCustomerSuggestions.TabIndex = 18;
@@ -237,18 +137,30 @@
             // groupBox2
             // 
             groupBox2.BackColor = SystemColors.GradientInactiveCaption;
+            groupBox2.Controls.Add(buttonSaveNewCustomer);
             groupBox2.Controls.Add(textBoxCustomerPhone);
             groupBox2.Controls.Add(label9);
             groupBox2.Controls.Add(label8);
             groupBox2.Controls.Add(label7);
             groupBox2.Controls.Add(textBoxCustomerAddress);
             groupBox2.Controls.Add(textBoxCustomerName);
-            groupBox2.Location = new Point(5, 27);
+            groupBox2.Location = new Point(15, 440);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(871, 677);
+            groupBox2.Size = new Size(871, 662);
             groupBox2.TabIndex = 19;
             groupBox2.TabStop = false;
             groupBox2.Text = "Customer";
+            // 
+            // buttonSaveNewCustomer
+            // 
+            buttonSaveNewCustomer.BackColor = Color.Bisque;
+            buttonSaveNewCustomer.Location = new Point(666, 18);
+            buttonSaveNewCustomer.Name = "buttonSaveNewCustomer";
+            buttonSaveNewCustomer.Size = new Size(189, 58);
+            buttonSaveNewCustomer.TabIndex = 21;
+            buttonSaveNewCustomer.Text = "Save";
+            buttonSaveNewCustomer.UseVisualStyleBackColor = false;
+            buttonSaveNewCustomer.Click += buttonSaveNewCustomer_Click;
             // 
             // label9
             // 
@@ -391,11 +303,115 @@
             groupBox3.TabStop = false;
             groupBox3.Text = "Order";
             // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.BackColor = Color.LightBlue;
+            label1.Location = new Point(33, 80);
+            label1.Name = "label1";
+            label1.Size = new Size(78, 41);
+            label1.TabIndex = 35;
+            label1.Text = "Item";
+            // 
+            // comboBoxItems
+            // 
+            comboBoxItems.FormattingEnabled = true;
+            comboBoxItems.Location = new Point(29, 124);
+            comboBoxItems.Name = "comboBoxItems";
+            comboBoxItems.Size = new Size(841, 49);
+            comboBoxItems.TabIndex = 34;
+            comboBoxItems.SelectedIndexChanged += comboBoxItems_SelectedIndexChanged;
+            // 
+            // groupBox1
+            // 
+            groupBox1.BackColor = Color.LightBlue;
+            groupBox1.Controls.Add(buttonMinus);
+            groupBox1.Controls.Add(buttonAdd);
+            groupBox1.Controls.Add(buttonAddItem);
+            groupBox1.Controls.Add(textBoxQuantity);
+            groupBox1.Controls.Add(label3);
+            groupBox1.Controls.Add(textBoxPrice);
+            groupBox1.Controls.Add(label2);
+            groupBox1.Location = new Point(14, 27);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(871, 388);
+            groupBox1.TabIndex = 36;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Menu";
+            // 
+            // buttonMinus
+            // 
+            buttonMinus.Location = new Point(802, 221);
+            buttonMinus.Name = "buttonMinus";
+            buttonMinus.Size = new Size(53, 47);
+            buttonMinus.TabIndex = 10;
+            buttonMinus.Text = "-";
+            buttonMinus.UseVisualStyleBackColor = true;
+            buttonMinus.Click += buttonMinus_Click;
+            // 
+            // buttonAdd
+            // 
+            buttonAdd.Location = new Point(743, 221);
+            buttonAdd.Name = "buttonAdd";
+            buttonAdd.Size = new Size(53, 47);
+            buttonAdd.TabIndex = 9;
+            buttonAdd.Text = "+";
+            buttonAdd.UseVisualStyleBackColor = true;
+            buttonAdd.Click += buttonAdd_Click;
+            // 
+            // buttonAddItem
+            // 
+            buttonAddItem.BackColor = Color.BurlyWood;
+            buttonAddItem.Location = new Point(667, 297);
+            buttonAddItem.Name = "buttonAddItem";
+            buttonAddItem.Size = new Size(188, 58);
+            buttonAddItem.TabIndex = 8;
+            buttonAddItem.Text = "Add";
+            buttonAddItem.UseVisualStyleBackColor = false;
+            buttonAddItem.Click += buttonAddItem_Click;
+            // 
+            // textBoxQuantity
+            // 
+            textBoxQuantity.Location = new Point(575, 221);
+            textBoxQuantity.Name = "textBoxQuantity";
+            textBoxQuantity.Size = new Size(162, 47);
+            textBoxQuantity.TabIndex = 7;
+            textBoxQuantity.Text = "1";
+            textBoxQuantity.TextChanged += textBoxQuantity_TextChanged;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(575, 177);
+            label3.Name = "label3";
+            label3.Size = new Size(132, 41);
+            label3.TabIndex = 6;
+            label3.Text = "Quantity";
+            // 
+            // textBoxPrice
+            // 
+            textBoxPrice.Location = new Point(252, 221);
+            textBoxPrice.Name = "textBoxPrice";
+            textBoxPrice.Size = new Size(277, 47);
+            textBoxPrice.TabIndex = 5;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(252, 177);
+            label2.Name = "label2";
+            label2.Size = new Size(82, 41);
+            label2.TabIndex = 4;
+            label2.Text = "Price";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(17F, 41F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1792, 1110);
+            ClientSize = new Size(1804, 1116);
+            Controls.Add(label1);
+            Controls.Add(comboBoxItems);
+            Controls.Add(groupBox1);
             Controls.Add(buttonRemoveOrder);
             Controls.Add(buttonSaveOrder);
             Controls.Add(richTextBoxToPay);
@@ -412,34 +428,24 @@
             Controls.Add(richTextBoxNote);
             Controls.Add(label5);
             Controls.Add(dateTimePickerShip);
-            Controls.Add(label1);
-            Controls.Add(comboBoxItems);
-            Controls.Add(groupBox1);
             Controls.Add(groupBox2);
             Controls.Add(groupBox3);
             Name = "Form1";
             Text = "Suvella";
             Load += Form1_Load;
-            groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
-        private ComboBox comboBoxItems;
-        private Label label1;
-        private Label label2;
-        private TextBox textBoxPrice;
-        private Label label3;
-        private TextBox textBoxQuantity;
         private DateTimePicker dateTimePickerShip;
         private Label label5;
         private RichTextBox richTextBoxNote;
         private Label label6;
-        private GroupBox groupBox1;
         private TextBox textBoxCustomerName;
         private TextBox textBoxCustomerPhone;
         private TextBox textBoxCustomerAddress;
@@ -448,7 +454,6 @@
         private Label label9;
         private Label label8;
         private Label label7;
-        private Button buttonAddItem;
         private ListBox listBoxOrderItems;
         private Label label10;
         private TextBox textBoxShipFee;
@@ -461,7 +466,16 @@
         private Button buttonSaveOrder;
         private Button buttonRemoveOrder;
         private GroupBox groupBox3;
+        private Label label1;
+        private ComboBox comboBoxItems;
+        private GroupBox groupBox1;
         private Button buttonMinus;
         private Button buttonAdd;
+        private Button buttonAddItem;
+        private TextBox textBoxQuantity;
+        private Label label3;
+        private TextBox textBoxPrice;
+        private Label label2;
+        private Button buttonSaveNewCustomer;
     }
 }

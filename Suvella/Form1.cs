@@ -54,23 +54,8 @@ namespace Suvella
             {
                 // Initialize other properties of the currentOrder
                 OrderItems = new List<OrderItem>(),  // Empty list for order items initially
-                ShippingAddress = string.Empty,  // Empty string for Shipping Address
-                ShippingMethod = string.Empty,  // Empty string for Shipping Method
-                Note = string.Empty,  // Empty string for Note
-                Feedback = "Not Yet",  // Default feedback
-                PaymentStatus = "Unpaid",  // Default payment status
-                OrderStatus = "Processing",  // Default order status
-                Discount = 0,  // Default discount amount
-                ShippingFee = 0,  // Default shipping fee
-                FinalPayment = 0,  // Default final price
-                OrderTime = DateTime.Now,  // Set the order time to now
-                ShippingTime = dateTimePickerShip.Value  // Shipping time from dateTimePicker
             };
         }
-
-
-
-
         private void LoadMenuData(string filePath)
         {
             try
@@ -333,7 +318,7 @@ namespace Suvella
             }
 
             currentOrder.FinalPayment = currentOrder.TotalPrice + currentOrder.ShippingFee - currentOrder.Discount;
-            
+
             richTextBoxToPay.Clear();
             richTextBoxToPay.AppendText($"Total: +{currentOrder.TotalPrice:N0}\n");
             richTextBoxToPay.AppendText($"Discount: -{currentOrder.Discount:N0}\n");
@@ -384,8 +369,18 @@ namespace Suvella
 
         private void buttonSaveOrder_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrWhiteSpace(textBoxCustomerName.Text))
+            {
+                MessageBox.Show("Please fill in customer name.");
+                return;
+            }
+            if (currentOrder.OrderItems.Count == 0)
+            {
+                MessageBox.Show("Please add items to the order.");
+                return;
+            }
             completeCurrentOrder();
-            saveToFile();   
+            saveToFile();
         }
 
         private void completeCurrentOrder()
@@ -397,6 +392,9 @@ namespace Suvella
             currentOrder.Note = richTextBoxNote.Text;
             currentOrder.ShippingTime = dateTimePickerShip.Value;
             currentOrder.OrderTime = DateTime.Now;
+            currentOrder.Feedback = "Not Yet";  
+            currentOrder.PaymentStatus = "Unpaid"; 
+            currentOrder.OrderStatus = "Processing"; 
         }
 
         private void saveToFile()
@@ -484,7 +482,7 @@ namespace Suvella
         private void buttonRemoveOrder_Click(object sender, EventArgs e)
         {
             InitializeCurrentOrder();
-            
+
             listBoxOrderItems.Items.Clear();  // Clear displayed items
             // Optionally, clear other fields as needed
             textBoxQuantity.Text = "1";
@@ -492,6 +490,44 @@ namespace Suvella
             richTextBoxToPay.Clear();
 
             MessageBox.Show("Order removed successfully!");
+        }
+
+        private void buttonSaveNewCustomer_Click(object sender, EventArgs e)
+        {
+            string filePath = "customers.xlsx";  // Ensure the path is correct
+            FileInfo fileInfo = new FileInfo(filePath);
+
+            using (var package = new ExcelPackage(fileInfo))
+            {
+                ExcelWorksheet worksheet;
+
+                // Check if the file exists, otherwise create it
+                if (fileInfo.Exists)
+                {
+                    worksheet = package.Workbook.Worksheets[0];
+                }
+                else
+                {
+                    worksheet = package.Workbook.Worksheets.Add("Customers");
+
+                    // Set headers for the columns
+                    worksheet.Cells[1, 1].Value = "Name";
+                    worksheet.Cells[1, 2].Value = "Phone";
+                    worksheet.Cells[1, 3].Value = "Address";
+                }
+
+                // Get the last row and append new customer data
+                int lastRow = worksheet.Dimension?.End.Row ?? 1;
+                int row = lastRow + 1;
+
+                worksheet.Cells[row, 1].Value = textBoxCustomerName.Text;
+                worksheet.Cells[row, 2].Value = textBoxCustomerPhone.Text;
+                worksheet.Cells[row, 3].Value = textBoxCustomerAddress.Text;
+
+                package.Save();
+                MessageBox.Show("Saved a new customer to customers.xlsx file.");
+
+            }
         }
     }
 }
