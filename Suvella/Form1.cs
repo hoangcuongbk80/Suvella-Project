@@ -654,6 +654,10 @@ namespace Suvella
 
             // Bind the DataTable to the DataGridView
             dataGridViewOrder.DataSource = dataTable;
+            foreach (DataGridViewColumn column in dataGridViewOrder.Columns)
+            {
+                column.SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
         }
 
         private void buttonSearchOrder_Click(object sender, EventArgs e)
@@ -805,7 +809,7 @@ namespace Suvella
             }
         }
 
-        //----------------------------Manage Orders---------------------------
+        //----------------------------Do Statistics---------------------------
         private void buttonStatisticItem_Click(object sender, EventArgs e)
         {
             loadOrders();
@@ -921,6 +925,10 @@ namespace Suvella
 
             // Bind the DataTable to the DataGridView
             dataGridViewItem.DataSource = itemDataTable;
+            foreach (DataGridViewColumn column in dataGridViewItem.Columns)
+            {
+                column.SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
         }
 
         private void dataGridViewItem_CellValueChanged(object sender, DataGridViewCellEventArgs e)
@@ -979,9 +987,9 @@ namespace Suvella
 
                         // Write the values into the Excel worksheet, starting from the second row
                         worksheet.Cells[rowIndex + 2, 1].Value = itemName;
-                        worksheet.Cells[rowIndex + 2, 2].Value = productionTarget; 
+                        worksheet.Cells[rowIndex + 2, 2].Value = productionTarget;
                         worksheet.Cells[rowIndex + 2, 3].Value = processingQuantity;
-                        worksheet.Cells[rowIndex + 2, 4].Value = shippedQuantity; 
+                        worksheet.Cells[rowIndex + 2, 4].Value = shippedQuantity;
                         worksheet.Cells[rowIndex + 2, 5].Value = inventoryQuantity;
                     }
 
@@ -1000,6 +1008,6 @@ namespace Suvella
             }
         }
 
-
+         
     }
 }
