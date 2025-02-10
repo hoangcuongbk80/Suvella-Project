@@ -77,6 +77,10 @@
             label4 = new Label();
             comboBoxOrderStatus = new ComboBox();
             buttonUpdate = new Button();
+            tabPage3 = new TabPage();
+            groupBox5 = new GroupBox();
+            buttonStatisticItem = new Button();
+            dataGridViewItem = new DataGridView();
             groupBox2.SuspendLayout();
             groupBox1.SuspendLayout();
             tabControl1.SuspendLayout();
@@ -84,6 +88,9 @@
             tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridViewOrder).BeginInit();
             groupBox4.SuspendLayout();
+            tabPage3.SuspendLayout();
+            groupBox5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewItem).BeginInit();
             SuspendLayout();
             // 
             // dateTimePickerShip
@@ -417,6 +424,7 @@
             // 
             tabControl1.Controls.Add(tabPage1);
             tabControl1.Controls.Add(tabPage2);
+            tabControl1.Controls.Add(tabPage3);
             tabControl1.Location = new Point(0, 1);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
@@ -589,6 +597,48 @@
             buttonUpdate.UseVisualStyleBackColor = false;
             buttonUpdate.Click += buttonUpdate_Click;
             // 
+            // tabPage3
+            // 
+            tabPage3.Controls.Add(groupBox5);
+            tabPage3.Location = new Point(10, 58);
+            tabPage3.Name = "tabPage3";
+            tabPage3.Padding = new Padding(3);
+            tabPage3.Size = new Size(2001, 1145);
+            tabPage3.TabIndex = 2;
+            tabPage3.Text = "Statistic";
+            tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // groupBox5
+            // 
+            groupBox5.Controls.Add(buttonStatisticItem);
+            groupBox5.Controls.Add(dataGridViewItem);
+            groupBox5.Location = new Point(29, 29);
+            groupBox5.Name = "groupBox5";
+            groupBox5.Size = new Size(1926, 1084);
+            groupBox5.TabIndex = 0;
+            groupBox5.TabStop = false;
+            groupBox5.Text = "Item";
+            // 
+            // buttonStatisticItem
+            // 
+            buttonStatisticItem.Location = new Point(883, 58);
+            buttonStatisticItem.Name = "buttonStatisticItem";
+            buttonStatisticItem.Size = new Size(188, 58);
+            buttonStatisticItem.TabIndex = 1;
+            buttonStatisticItem.Text = "Tell Me";
+            buttonStatisticItem.UseVisualStyleBackColor = true;
+            buttonStatisticItem.Click += buttonStatisticItem_Click;
+            // 
+            // dataGridViewItem
+            // 
+            dataGridViewItem.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewItem.Location = new Point(18, 122);
+            dataGridViewItem.Name = "dataGridViewItem";
+            dataGridViewItem.RowHeadersWidth = 102;
+            dataGridViewItem.Size = new Size(1883, 945);
+            dataGridViewItem.TabIndex = 0;
+            dataGridViewItem.CellValueChanged += dataGridViewItem_CellValueChanged;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(17F, 41F);
@@ -610,6 +660,9 @@
             ((System.ComponentModel.ISupportInitialize)dataGridViewOrder).EndInit();
             groupBox4.ResumeLayout(false);
             groupBox4.PerformLayout();
+            tabPage3.ResumeLayout(false);
+            groupBox5.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dataGridViewItem).EndInit();
             ResumeLayout(false);
         }
 
@@ -663,5 +716,9 @@
         private Label label4;
         private GroupBox groupBox4;
         private Label label14;
+        private TabPage tabPage3;
+        private GroupBox groupBox5;
+        private Button buttonStatisticItem;
+        private DataGridView dataGridViewItem;
     }
 }

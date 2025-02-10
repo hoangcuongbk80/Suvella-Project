@@ -805,6 +805,95 @@ namespace Suvella
             }
         }
 
+        //----------------------------Manage Orders---------------------------
+        private void buttonStatisticItem_Click(object sender, EventArgs e)
+        {
+            loadOrders();
+            // Dictionary to hold item statistics: {ItemName => (processingCount, shippedCount)}
+            var itemStatistics = new Dictionary<string, (int processingCount, int shippedCount)>();
+
+            // Loop through all orders to extract item information and statuses
+            foreach (var order in orders)
+            {
+                // Check if the order status is 'Processing' or 'Shipped' to categorize items
+                string orderStatus = order.OrderStatus.ToLower();  // Example: 'Processing' or 'Shipped'
+
+                // If order is in processing or shipped, loop through the items
+                foreach (var item in order.OrderItems)
+                {
+                    // Determine which status to count the item under
+                    if (orderStatus == "processing")
+                    {
+                        // Add item to the 'processing' count
+                        if (itemStatistics.ContainsKey(item.ItemName))
+                        {
+                            var stats = itemStatistics[item.ItemName];
+                            itemStatistics[item.ItemName] = (stats.processingCount + item.Quantity, stats.shippedCount);
+                        }
+                        else
+                        {
+                            itemStatistics[item.ItemName] = (item.Quantity, 0);
+                        }
+                    }
+                    else if (orderStatus == "shipped")
+                    {
+                        // Add item to the 'shipped' count
+                        if (itemStatistics.ContainsKey(item.ItemName))
+                        {
+                            var stats = itemStatistics[item.ItemName];
+                            itemStatistics[item.ItemName] = (stats.processingCount, stats.shippedCount + item.Quantity);
+                        }
+                        else
+                        {
+                            itemStatistics[item.ItemName] = (0, item.Quantity);
+                        }
+                    }
+                }
+            }
+
+            // Prepare a DataTable to bind the data to the DataGridView
+            DataTable itemDataTable = new DataTable();
+            itemDataTable.Columns.Add("Item Name");
+            itemDataTable.Columns.Add("Production Target");
+            itemDataTable.Columns.Add("Inventory Quantity");
+            itemDataTable.Columns.Add("Processing Quantity");
+            itemDataTable.Columns.Add("Shipped Quantity");
+
+            // Fill the DataTable with item statistics
+            foreach (var itemStat in itemStatistics)
+            {
+                var row = itemDataTable.NewRow();
+                row["Item Name"] = itemStat.Key;
+                row["Shipped Quantity"] = itemStat.Value.shippedCount;
+                row["Processing Quantity"] = itemStat.Value.processingCount;
+                itemDataTable.Rows.Add(row);
+            }
+
+            // Bind the DataTable to the DataGridView
+            dataGridViewItem.DataSource = itemDataTable;
+        }
+
+        private void dataGridViewItem_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            // Check if the changed cell is the "Inventory Quantity" column
+            if (e.ColumnIndex == dataGridViewItem.Columns["Inventory Quantity"].Index)
+            {
+                // Get the corresponding item name
+                string itemName = dataGridViewItem.Rows[e.RowIndex].Cells["Item Name"].Value.ToString();
+
+                // Get the inventory quantity input by the user
+                int inventoryQuantity = Convert.ToInt32(dataGridViewItem.Rows[e.RowIndex].Cells["Inventory Quantity"].Value);
+
+                // Get the processing quantity for the item
+                int processingQuantity = Convert.ToInt32(dataGridViewItem.Rows[e.RowIndex].Cells["Processing Quantity"].Value);
+
+                // Calculate the Production Target
+                int productionTarget = processingQuantity - inventoryQuantity;
+
+                // Update the "Production Target" column in the DataGridView
+                dataGridViewItem.Rows[e.RowIndex].Cells["Production Target"].Value = productionTarget;
+            }
+        }
 
     }
 }
