@@ -1,6 +1,7 @@
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,10 @@ namespace Suvella
         List<decimal> prices = new List<decimal>();
         List<Customer> customers = new List<Customer>();
         Order currentOrder;
+
+        private List<Order> orders = new List<Order>();
+        private List<Order> filteredOrders = new List<Order>();
+        private DataTable dataTable;
 
         public Form1()
         {
@@ -37,29 +42,7 @@ namespace Suvella
             }
 
             InitializeCurrentOrder();
-            ConfigureDataGridView();
         }
-
-        private void ConfigureDataGridView()
-        {
-            // Set column headers
-            dataGridViewOrder.Columns.Clear();  // Clear existing columns first (if any)
-
-            dataGridViewOrder.Columns.Add("OrderID", "Order ID");
-            dataGridViewOrder.Columns.Add("CustomerName", "Customer Name");
-            dataGridViewOrder.Columns.Add("OrderTime", "Order Time");
-            dataGridViewOrder.Columns.Add("TotalPrice", "Total Price");
-            dataGridViewOrder.Columns.Add("PaymentStatus", "Payment Status");
-            dataGridViewOrder.Columns.Add("OrderStatus", "Order Status");
-            dataGridViewOrder.Columns.Add("Discount", "Discount");
-
-            // Enable automatic column sizing
-            dataGridViewOrder.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewOrder.SelectionMode = DataGridViewSelectionMode.FullRowSelect;  // Allow row selection
-            dataGridViewOrder.ReadOnly = true;  // Make the grid read-only (optional, based on your needs)
-        }
-
-
         private void InitializeCurrentOrder()
         {
             // Ensure the currentOrder is initialized
@@ -77,6 +60,8 @@ namespace Suvella
                 OrderItems = new List<OrderItem>(),  // Empty list for order items initially
             };
         }
+
+        //-----------------------Place Orders-----------------------
         private void LoadMenuData(string filePath)
         {
             try
@@ -160,7 +145,6 @@ namespace Suvella
             textBoxCustomerName.AutoCompleteCustomSource = customerNames;
         }
 
-        // Event handler to update customer info when a name is typed
         private void textBoxCustomerName_TextChanged(object sender, EventArgs e)
         {
             // Get the customer name typed in the TextBox
@@ -195,7 +179,6 @@ namespace Suvella
             }
         }
 
-        // Event handler when a customer is selected from the ListBox
         private void listBoxCustomerSuggestions_SelectedIndexChanged(object sender, EventArgs e)
         {
             // Get the selected customer information from the ListBox
@@ -227,7 +210,6 @@ namespace Suvella
             }
         }
 
-        // Event handler to update price when an item is selected
         private void comboBoxItems_SelectedIndexChanged(object sender, EventArgs e)
         {
             // Get the selected item from the comboBox
@@ -254,7 +236,6 @@ namespace Suvella
             }
         }
 
-        // Event handler to update total price when quantity changes
         private void textBoxQuantity_TextChanged(object sender, EventArgs e)
         {
             // Get the selected item from the comboBox
@@ -551,9 +532,279 @@ namespace Suvella
             }
         }
 
+        //----------------------------Manage Orders---------------------------
         private void buttonLoadOrders_Click(object sender, EventArgs e)
         {
+            loadOrders();
+            bindDataGridView();
 
+            // Display the number of orders
+            //MessageBox.Show($"Total Orders: {orders.Count}", "Order Count", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
+        private void loadOrders()
+        {
+            orders.Clear();
+            string filePath = "orders.xlsx";  // Make sure this path is correct
+
+            try
+            {
+                using (var package = new ExcelPackage(new FileInfo(filePath)))
+                {
+                    var worksheet = package.Workbook.Worksheets[0];  // Assuming data is in the first sheet
+
+                    // Loop through the rows and read the data
+                    for (int row = 2; row <= worksheet.Dimension.End.Row; row++) // Start from row 2 to skip the header
+                    {
+                        // Create a new Customer object using the data from the row
+                        var customer = new Customer
+                        {
+                            Name = worksheet.Cells[row, 1].Text.Trim(),  // Customer Name in column 1
+                            Phone = worksheet.Cells[row, 2].Text.Trim(),  // Customer Phone in column 2
+                            Address = worksheet.Cells[row, 3].Text.Trim(), // Customer Address in column 3
+                        };
+
+                        // Initialize the order object and populate its properties
+                        var order = new Order(customer)
+                        {
+                            ShippingAddress = worksheet.Cells[row, 5].Text.Trim(),  // Shipping Address in column 5
+                            ShippingTime = DateTime.TryParse(worksheet.Cells[row, 6].Text, out var shippingTime) ? shippingTime : DateTime.MinValue,  // Order Time in column 13
+
+                            OrderTime = DateTime.TryParse(worksheet.Cells[row, 13].Text, out var orderTime) ? orderTime : DateTime.MinValue,  // Order Time in column 13
+                            Discount = decimal.TryParse(worksheet.Cells[row, 12].Text, out var discount) ? discount : 0,  // Discount in column 12
+                            FinalPayment = decimal.TryParse(worksheet.Cells[row, 7].Text, out var finalPayment) ? finalPayment : 0, // Final Payment in column 7
+                            PaymentStatus = worksheet.Cells[row, 8].Text.Trim(),  // Payment Status in column 8
+                            OrderStatus = worksheet.Cells[row, 9].Text.Trim(),  // Order Status in column 9
+                            Feedback = worksheet.Cells[row, 10].Text.Trim(),  // Feedback in column 10
+                            Note = worksheet.Cells[row, 11].Text.Trim(),  // Order Note in column 11
+                            OrderID = row.ToString(),
+                        };
+
+                        // Parse the "Items" column (column 4) into individual order items
+                        var itemsInfo = worksheet.Cells[row, 4].Text.Trim(); // Items in column 4
+                        var orderItems = new List<OrderItem>();
+                        if (!string.IsNullOrEmpty(itemsInfo))
+                        {
+                            var itemLines = itemsInfo.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+                            foreach (var itemLine in itemLines)
+                            {
+                                var parts = itemLine.Split(':');
+                                if (parts.Length == 2)
+                                {
+                                    var itemName = parts[0].Trim();
+                                    if (int.TryParse(parts[1].Trim(), out var itemQuantity))
+                                    {
+                                        orderItems.Add(new OrderItem
+                                        {
+                                            ItemName = itemName,
+                                            Quantity = itemQuantity,
+                                            Price = 0  // Assuming the price is not saved in the Excel file, you might need to calculate it elsewhere
+                                        });
+                                    }
+                                }
+                            }
+                        }
+
+                        // Assign the loaded order items to the order
+                        order.OrderItems = orderItems;
+
+                        // Add the order to the list
+                        orders.Add(order);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading orders: " + ex.Message);
+            }
+            filteredOrders = orders;
+        }
+        private void bindDataGridView(List<Order> ordersToBind = null)
+        {
+            // Create a new DataTable if it's not already created or if it's a new set of data
+            if (dataTable == null)
+            {
+                dataTable = new DataTable();
+
+                // Add columns to DataTable
+                dataTable.Columns.Add("Customer Name");
+                dataTable.Columns.Add("Phone");
+                dataTable.Columns.Add("Final Payment");
+                dataTable.Columns.Add("Payment Status");
+                dataTable.Columns.Add("Order Status");
+            }
+
+            // Clear any existing data in the DataTable
+            dataTable.Rows.Clear();
+
+            // Use the provided orders list or all orders
+            var ordersToDisplay = ordersToBind ?? orders;
+
+            // Loop through the orders list and populate the DataTable
+            foreach (var order in ordersToDisplay)
+            {
+                var row = dataTable.NewRow();
+                row["Customer Name"] = order.Customer.Name;
+                row["Phone"] = order.Customer.Phone;
+                row["Final Payment"] = order.FinalPayment;
+                row["Payment Status"] = order.PaymentStatus;
+                row["Order Status"] = order.OrderStatus;
+
+                dataTable.Rows.Add(row);
+            }
+
+            // Bind the DataTable to the DataGridView
+            dataGridViewOrder.DataSource = dataTable;
+        }
+
+        private void buttonSearchOrder_Click(object sender, EventArgs e)
+        {
+            string searchTerm = textBoxSearchOrder.Text.Trim().ToLower();
+
+            // Filter the orders based on the search term (you can extend this to multiple fields)
+            filteredOrders = orders.Where(order =>
+                order.Customer.Name.ToLower().Contains(searchTerm) ||        // Search by customer name
+                order.OrderStatus.ToLower().Contains(searchTerm) ||          // Search by order status
+                order.PaymentStatus.ToLower().Contains(searchTerm)           // Search by payment status
+            ).ToList();
+
+            // Use bindDataGridView to bind the filtered orders to the DataGridView
+            bindDataGridView(filteredOrders);
+
+            // Display a message if no results found
+            if (filteredOrders.Count == 0)
+            {
+                MessageBox.Show("No orders found matching the search criteria.", "Search Result", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void dataGridViewOrder_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dataGridViewOrder.SelectedRows.Count > 0)
+            {
+                // Get the selected row index
+                int selectedRowIndex = dataGridViewOrder.SelectedRows[0].Index;
+
+                // Get the corresponding order from the filteredOrders list
+                var selectedOrder = filteredOrders[selectedRowIndex];
+
+                // Prepare the information to be displayed in the RichTextBox
+                StringBuilder orderInfo = new StringBuilder();
+
+                orderInfo.AppendLine("Name: " + selectedOrder.Customer.Name);
+                orderInfo.AppendLine("Phone: " + selectedOrder.Customer.Phone);
+                orderInfo.AppendLine("Address: " + selectedOrder.Customer.Address);
+                orderInfo.AppendLine("----------------------------------");
+                orderInfo.AppendLine("Final Payment: " + selectedOrder.FinalPayment);
+                orderInfo.AppendLine("Payment Status: " + selectedOrder.PaymentStatus);
+                orderInfo.AppendLine("Order Status: " + selectedOrder.OrderStatus);
+                orderInfo.AppendLine("----------------------------------");
+                orderInfo.AppendLine("Shipping Address: " + selectedOrder.ShippingAddress);
+                orderInfo.AppendLine("Shipping Time: " + selectedOrder.ShippingTime.ToString("yyyy-MM-dd HH:mm"));
+                orderInfo.AppendLine("----------------------------------");
+                orderInfo.AppendLine("Order Time: " + selectedOrder.OrderTime.ToString("yyyy-MM-dd HH:mm"));
+                orderInfo.AppendLine("Discount: " + selectedOrder.Discount);
+                orderInfo.AppendLine("Order Note: " + selectedOrder.Note);
+                orderInfo.AppendLine("Feedback: " + selectedOrder.Feedback);
+
+                // Items (iterate through the order items)
+                orderInfo.AppendLine("\nOrder Items:");
+                foreach (var item in selectedOrder.OrderItems)
+                {
+                    orderInfo.AppendLine($"{item.ItemName}: {item.Quantity} x {item.Price} = {item.TotalPrice}");
+                }
+
+                // Display the order details in the RichTextBox
+                richTextBoxOrderDetails.Text = orderInfo.ToString();
+
+                // Set the ComboBox to the current status of the selected order
+                comboBoxOrderStatus.SelectedItem = selectedOrder.OrderStatus;
+                comboBoxPaymentStatus.SelectedItem = selectedOrder.PaymentStatus;
+            }
+        }
+
+        private void buttonUpdate_Click(object sender, EventArgs e)
+        {
+            if (dataGridViewOrder.SelectedRows.Count > 0)
+            {
+                // Get the selected row index
+                int selectedRowIndex = dataGridViewOrder.SelectedRows[0].Index;
+
+                // Ensure the selected index is within bounds of the filteredOrders list
+                if (selectedRowIndex >= 0 && selectedRowIndex < filteredOrders.Count)
+                {
+                    // Get the corresponding order from the filteredOrders list
+                    var selectedOrder = filteredOrders[selectedRowIndex];
+
+                    // Get the new status from the ComboBox
+                    string newOrderStatus = comboBoxOrderStatus.SelectedItem.ToString();
+                    string newPaymentStatus = comboBoxPaymentStatus.SelectedItem.ToString();
+
+
+                    // Update the order status in the filteredOrders list
+                    selectedOrder.OrderStatus = newOrderStatus;
+                    selectedOrder.PaymentStatus = newPaymentStatus;
+
+                    // If the order is in the orders list, we need to reflect the change there as well
+                    var orderInAllOrders = orders.FirstOrDefault(order => order.OrderID == selectedOrder.OrderID);
+                    if (orderInAllOrders != null)
+                    {
+                        orderInAllOrders.OrderStatus = newOrderStatus;
+                        orderInAllOrders.PaymentStatus = newPaymentStatus;
+                    }
+
+                    // Save the orders to Excel after update
+                    SaveOrdersToExcel();
+
+                    // Refresh the DataGridView to reflect the updated status
+                    bindDataGridView(filteredOrders);
+
+                    // Optionally, you could reset the ComboBox if needed
+                    comboBoxOrderStatus.SelectedIndex = -1;
+                }
+                else
+                {
+                    // Handle the case where no order is selected or index is out of range
+                    MessageBox.Show("Please select a valid order to update.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                // Handle case when no order is selected
+                MessageBox.Show("Please select an order first.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void SaveOrdersToExcel()
+        {
+            string filePath = "orders.xlsx";  // Make sure this path is correct
+
+            try
+            {
+                using (var package = new ExcelPackage(new FileInfo(filePath)))
+                {
+                    var worksheet = package.Workbook.Worksheets[0];  // Assuming data is in the first sheet
+
+                    // Loop through the orders and update the Excel file
+                    for (int row = 2; row <= worksheet.Dimension.End.Row; row++) // Assuming data starts from row 2
+                    {
+                        var order = orders[row - 2]; // Map rows to orders list
+
+                        // Update the order status and payment status in the Excel sheet
+                        worksheet.Cells[row, 9].Value = order.OrderStatus; // Order Status is in column 9
+                        worksheet.Cells[row, 8].Value = order.PaymentStatus; // Payment Status is in column 8
+                    }
+
+                    // Save the changes
+                    package.Save();
+                    MessageBox.Show("Orders updated successfully in Excel.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error saving orders: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
     }
 }

@@ -13,8 +13,7 @@ namespace Suvella
         public decimal TotalPrice => OrderItems.Sum(item => item.TotalPrice);
         public string ShippingAddress { get; set; }
         public string ShippingMethod { get; set; }
-
-        // New Fields
+        public string OrderID { get; set; }
         public decimal Discount { get; set; }  // Shipping Fee
         public decimal ShippingFee { get; set; }  // Shipping Fee
         public decimal FinalPayment { get; set; }  // Final price
