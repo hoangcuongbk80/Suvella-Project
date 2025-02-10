@@ -809,6 +809,11 @@ namespace Suvella
         private void buttonStatisticItem_Click(object sender, EventArgs e)
         {
             loadOrders();
+            doStatistic();
+        }
+
+        private void doStatistic()
+        {
             // Dictionary to hold item statistics: {ItemName => (processingCount, shippedCount)}
             var itemStatistics = new Dictionary<string, (int processingCount, int shippedCount)>();
 
@@ -851,6 +856,36 @@ namespace Suvella
                 }
             }
 
+            // Read inventory data from target_production.xlsx if it exists
+            Dictionary<string, int> inventoryData = new Dictionary<string, int>();
+            string inventoryFilePath = "target_production.xlsx";
+
+            if (File.Exists(inventoryFilePath))
+            {
+                try
+                {
+                    using (var package = new ExcelPackage(new FileInfo(inventoryFilePath)))
+                    {
+                        var worksheet = package.Workbook.Worksheets[0]; // Assuming the data is in the first sheet
+
+                        // Loop through the rows and get the inventory data
+                        for (int row = 2; row <= worksheet.Dimension.End.Row; row++) // Start from row 2 to skip the header
+                        {
+                            string itemName = worksheet.Cells[row, 1].Text.Trim();
+                            int inventoryQuantity = 0;
+                            int.TryParse(worksheet.Cells[row, 4].Text.Trim(), out inventoryQuantity); // Assuming inventory quantity is in column 4
+
+                            // Add the item and its inventory to the dictionary
+                            inventoryData[itemName] = inventoryQuantity;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error reading inventory data: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+
             // Prepare a DataTable to bind the data to the DataGridView
             DataTable itemDataTable = new DataTable();
             itemDataTable.Columns.Add("Item Name");
@@ -859,13 +894,27 @@ namespace Suvella
             itemDataTable.Columns.Add("Processing Quantity");
             itemDataTable.Columns.Add("Shipped Quantity");
 
-            // Fill the DataTable with item statistics
+            // Fill the DataTable with item statistics and calculate the production target
             foreach (var itemStat in itemStatistics)
             {
                 var row = itemDataTable.NewRow();
-                row["Item Name"] = itemStat.Key;
+                string itemName = itemStat.Key;
+
+                // Get inventory quantity (default to 0 if not found in the inventory data)
+                int inventoryQuantity = inventoryData.ContainsKey(itemName) ? inventoryData[itemName] : 0;
+
+                // Calculate production target
+                int processingQuantity = itemStat.Value.processingCount;
+                int productionTarget = processingQuantity - inventoryQuantity;
+
+                // Populate the row with values
+                row["Item Name"] = itemName;
                 row["Shipped Quantity"] = itemStat.Value.shippedCount;
-                row["Processing Quantity"] = itemStat.Value.processingCount;
+                row["Processing Quantity"] = processingQuantity;
+                row["Inventory Quantity"] = inventoryQuantity;
+                row["Production Target"] = productionTarget;
+
+                // Add the row to the DataTable
                 itemDataTable.Rows.Add(row);
             }
 
@@ -892,8 +941,63 @@ namespace Suvella
 
                 // Update the "Production Target" column in the DataGridView
                 dataGridViewItem.Rows[e.RowIndex].Cells["Production Target"].Value = productionTarget;
+                saveToProductionTargetFile();
             }
         }
+
+        private void saveToProductionTargetFile()
+        {
+            try
+            {
+                // Create a new Excel package to write data
+                using (var package = new ExcelPackage())
+                {
+                    // Add a worksheet to the Excel package
+                    var worksheet = package.Workbook.Worksheets.Add("Production Targets");
+
+                    // Set the column headers in the first row
+                    worksheet.Cells[1, 1].Value = "Item Name";
+                    worksheet.Cells[1, 2].Value = "Shipped Quantity";
+                    worksheet.Cells[1, 3].Value = "Processing Quantity";
+                    worksheet.Cells[1, 4].Value = "Inventory Quantity";
+                    worksheet.Cells[1, 5].Value = "Production Target";
+
+                    // Loop through each row in the DataGridView and add data to Excel
+                    for (int rowIndex = 0; rowIndex < dataGridViewItem.Rows.Count; rowIndex++)
+                    {
+                        // Skip the last row (if it's empty)
+                        if (dataGridViewItem.Rows[rowIndex].IsNewRow) continue;
+
+                        // Get the values from the DataGridView cells for each row
+                        string itemName = dataGridViewItem.Rows[rowIndex].Cells["Item Name"].Value?.ToString() ?? string.Empty;
+                        int shippedQuantity = Convert.ToInt32(dataGridViewItem.Rows[rowIndex].Cells["Shipped Quantity"].Value);
+                        int processingQuantity = Convert.ToInt32(dataGridViewItem.Rows[rowIndex].Cells["Processing Quantity"].Value);
+                        int inventoryQuantity = Convert.ToInt32(dataGridViewItem.Rows[rowIndex].Cells["Inventory Quantity"].Value);
+                        int productionTarget = Convert.ToInt32(dataGridViewItem.Rows[rowIndex].Cells["Production Target"].Value);
+
+                        // Write the values into the Excel worksheet, starting from the second row
+                        worksheet.Cells[rowIndex + 2, 1].Value = itemName;
+                        worksheet.Cells[rowIndex + 2, 2].Value = shippedQuantity;
+                        worksheet.Cells[rowIndex + 2, 3].Value = processingQuantity;
+                        worksheet.Cells[rowIndex + 2, 4].Value = inventoryQuantity;
+                        worksheet.Cells[rowIndex + 2, 5].Value = productionTarget;
+                    }
+
+                    // Save the Excel file to disk
+                    string filePath = "target_production.xlsx"; // You can customize the file path
+                    FileInfo file = new FileInfo(filePath);
+                    package.SaveAs(file);
+
+                    // Inform the user that the file has been saved
+                    //MessageBox.Show("Data has been saved to target_production.xlsx", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error saving data to Excel: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
 
     }
 }
