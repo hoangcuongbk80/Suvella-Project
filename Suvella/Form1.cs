@@ -857,14 +857,14 @@ namespace Suvella
             }
 
             // Read inventory data from target_production.xlsx if it exists
-            Dictionary<string, int> inventoryData = new Dictionary<string, int>();
-            string inventoryFilePath = "target_production.xlsx";
+            Dictionary<string, int> targetProductionData = new Dictionary<string, int>();
+            string targetProductionFilePath = "target_production.xlsx";
 
-            if (File.Exists(inventoryFilePath))
+            if (File.Exists(targetProductionFilePath))
             {
                 try
                 {
-                    using (var package = new ExcelPackage(new FileInfo(inventoryFilePath)))
+                    using (var package = new ExcelPackage(new FileInfo(targetProductionFilePath)))
                     {
                         var worksheet = package.Workbook.Worksheets[0]; // Assuming the data is in the first sheet
 
@@ -872,11 +872,11 @@ namespace Suvella
                         for (int row = 2; row <= worksheet.Dimension.End.Row; row++) // Start from row 2 to skip the header
                         {
                             string itemName = worksheet.Cells[row, 1].Text.Trim();
-                            int inventoryQuantity = 0;
-                            int.TryParse(worksheet.Cells[row, 4].Text.Trim(), out inventoryQuantity); // Assuming inventory quantity is in column 4
+                            int targetProduction = 0;
+                            int.TryParse(worksheet.Cells[row, 2].Text.Trim(), out targetProduction); // Assuming inventory quantity is in column 4
 
                             // Add the item and its inventory to the dictionary
-                            inventoryData[itemName] = inventoryQuantity;
+                            targetProductionData[itemName] = targetProduction;
                         }
                     }
                 }
@@ -890,9 +890,9 @@ namespace Suvella
             DataTable itemDataTable = new DataTable();
             itemDataTable.Columns.Add("Item Name");
             itemDataTable.Columns.Add("Production Target");
-            itemDataTable.Columns.Add("Inventory Quantity");
             itemDataTable.Columns.Add("Processing Quantity");
             itemDataTable.Columns.Add("Shipped Quantity");
+            itemDataTable.Columns.Add("Inventory Quantity");
 
             // Fill the DataTable with item statistics and calculate the production target
             foreach (var itemStat in itemStatistics)
@@ -901,18 +901,19 @@ namespace Suvella
                 string itemName = itemStat.Key;
 
                 // Get inventory quantity (default to 0 if not found in the inventory data)
-                int inventoryQuantity = inventoryData.ContainsKey(itemName) ? inventoryData[itemName] : 0;
+                int targetProductionQuantity = targetProductionData.ContainsKey(itemName) ? targetProductionData[itemName] : 0;
 
                 // Calculate production target
                 int processingQuantity = itemStat.Value.processingCount;
-                int productionTarget = processingQuantity - inventoryQuantity;
+                int shippedQuantity = itemStat.Value.shippedCount;
+                int inventoryQuantity = targetProductionQuantity - processingQuantity - shippedQuantity;
 
                 // Populate the row with values
                 row["Item Name"] = itemName;
-                row["Shipped Quantity"] = itemStat.Value.shippedCount;
+                row["Production Target"] = targetProductionQuantity;
                 row["Processing Quantity"] = processingQuantity;
+                row["Shipped Quantity"] = itemStat.Value.shippedCount;
                 row["Inventory Quantity"] = inventoryQuantity;
-                row["Production Target"] = productionTarget;
 
                 // Add the row to the DataTable
                 itemDataTable.Rows.Add(row);
@@ -924,23 +925,24 @@ namespace Suvella
 
         private void dataGridViewItem_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            // Check if the changed cell is the "Inventory Quantity" column
-            if (e.ColumnIndex == dataGridViewItem.Columns["Inventory Quantity"].Index)
+            // Check if the changed cell is the "Production Target" column
+            if (e.ColumnIndex == dataGridViewItem.Columns["Production Target"].Index)
             {
                 // Get the corresponding item name
                 string itemName = dataGridViewItem.Rows[e.RowIndex].Cells["Item Name"].Value.ToString();
 
                 // Get the inventory quantity input by the user
-                int inventoryQuantity = Convert.ToInt32(dataGridViewItem.Rows[e.RowIndex].Cells["Inventory Quantity"].Value);
+                int productionTarget = Convert.ToInt32(dataGridViewItem.Rows[e.RowIndex].Cells["Production Target"].Value);
 
                 // Get the processing quantity for the item
                 int processingQuantity = Convert.ToInt32(dataGridViewItem.Rows[e.RowIndex].Cells["Processing Quantity"].Value);
+                int shippedQuantity = Convert.ToInt32(dataGridViewItem.Rows[e.RowIndex].Cells["Shipped Quantity"].Value);
 
                 // Calculate the Production Target
-                int productionTarget = processingQuantity - inventoryQuantity;
+                int inventoryQuantity = productionTarget - processingQuantity - shippedQuantity;
 
                 // Update the "Production Target" column in the DataGridView
-                dataGridViewItem.Rows[e.RowIndex].Cells["Production Target"].Value = productionTarget;
+                dataGridViewItem.Rows[e.RowIndex].Cells["Inventory Quantity"].Value = inventoryQuantity;
                 saveToProductionTargetFile();
             }
         }
@@ -957,10 +959,10 @@ namespace Suvella
 
                     // Set the column headers in the first row
                     worksheet.Cells[1, 1].Value = "Item Name";
-                    worksheet.Cells[1, 2].Value = "Shipped Quantity";
+                    worksheet.Cells[1, 2].Value = "Production Target";
                     worksheet.Cells[1, 3].Value = "Processing Quantity";
-                    worksheet.Cells[1, 4].Value = "Inventory Quantity";
-                    worksheet.Cells[1, 5].Value = "Production Target";
+                    worksheet.Cells[1, 4].Value = "Shipped Quantity";
+                    worksheet.Cells[1, 5].Value = "Inventory Quantity";
 
                     // Loop through each row in the DataGridView and add data to Excel
                     for (int rowIndex = 0; rowIndex < dataGridViewItem.Rows.Count; rowIndex++)
@@ -977,10 +979,10 @@ namespace Suvella
 
                         // Write the values into the Excel worksheet, starting from the second row
                         worksheet.Cells[rowIndex + 2, 1].Value = itemName;
-                        worksheet.Cells[rowIndex + 2, 2].Value = shippedQuantity;
+                        worksheet.Cells[rowIndex + 2, 2].Value = productionTarget; 
                         worksheet.Cells[rowIndex + 2, 3].Value = processingQuantity;
-                        worksheet.Cells[rowIndex + 2, 4].Value = inventoryQuantity;
-                        worksheet.Cells[rowIndex + 2, 5].Value = productionTarget;
+                        worksheet.Cells[rowIndex + 2, 4].Value = shippedQuantity; 
+                        worksheet.Cells[rowIndex + 2, 5].Value = inventoryQuantity;
                     }
 
                     // Save the Excel file to disk
