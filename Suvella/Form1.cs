@@ -151,7 +151,7 @@ namespace Suvella
             string typedName = textBoxCustomerName.Text;
 
             // Find all customers whose names match the typed input
-            var matchingCustomers = customers.Where(c => c.Name.StartsWith(typedName, StringComparison.OrdinalIgnoreCase)).ToList();
+            var matchingCustomers = customers.Where(c => c.Name.Contains(typedName, StringComparison.OrdinalIgnoreCase)).ToList();
 
             // If we find any matching customers, show their details
             if (matchingCustomers.Any())
@@ -383,6 +383,9 @@ namespace Suvella
             }
             completeCurrentOrder();
             saveToFile();
+            dataGridViewItem.DataSource = null;
+            dataGridViewOrder.DataSource = null;
+            richTextBoxOrderDetails.Clear();
         }
 
         private void completeCurrentOrder()
@@ -764,6 +767,10 @@ namespace Suvella
 
                     // Optionally, you could reset the ComboBox if needed
                     comboBoxOrderStatus.SelectedIndex = -1;
+                    comboBoxPaymentStatus.SelectedIndex = -1;
+                    dataGridViewItem.DataSource = null;
+                    richTextBoxOrderDetails.Clear();
+
                 }
                 else
                 {

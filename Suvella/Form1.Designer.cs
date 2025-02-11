@@ -580,7 +580,7 @@
             // comboBoxOrderStatus
             // 
             comboBoxOrderStatus.FormattingEnabled = true;
-            comboBoxOrderStatus.Items.AddRange(new object[] { "Processing", "Shipped ", "Cancelled" });
+            comboBoxOrderStatus.Items.AddRange(new object[] { "Processing", "Shipped", "Cancelled" });
             comboBoxOrderStatus.Location = new Point(19, 151);
             comboBoxOrderStatus.Name = "comboBoxOrderStatus";
             comboBoxOrderStatus.Size = new Size(302, 49);
