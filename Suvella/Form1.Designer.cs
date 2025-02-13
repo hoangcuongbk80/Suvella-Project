@@ -83,14 +83,15 @@
             buttonUpdate = new Button();
             tabPage3 = new TabPage();
             groupBox5 = new GroupBox();
+            richTextBoxStatistic = new RichTextBox();
             buttonStatisticItem = new Button();
             dataGridViewItem = new DataGridView();
-            richTextBoxStatistic = new RichTextBox();
             groupBox2.SuspendLayout();
             groupBox1.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             groupBox6.SuspendLayout();
+            groupBox3.SuspendLayout();
             tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridViewOrder).BeginInit();
             groupBox4.SuspendLayout();
@@ -187,6 +188,7 @@
             // buttonSaveNewCustomer
             // 
             buttonSaveNewCustomer.BackColor = Color.Bisque;
+            buttonSaveNewCustomer.Font = new Font("Algerian", 9.900001F, FontStyle.Bold | FontStyle.Italic);
             buttonSaveNewCustomer.Location = new Point(666, 18);
             buttonSaveNewCustomer.Name = "buttonSaveNewCustomer";
             buttonSaveNewCustomer.Size = new Size(189, 58);
@@ -307,9 +309,10 @@
             // buttonSaveOrder
             // 
             buttonSaveOrder.BackColor = Color.Lime;
-            buttonSaveOrder.Location = new Point(1200, 1019);
+            buttonSaveOrder.Font = new Font("Algerian", 9.900001F, FontStyle.Bold | FontStyle.Italic);
+            buttonSaveOrder.Location = new Point(114, 1004);
             buttonSaveOrder.Name = "buttonSaveOrder";
-            buttonSaveOrder.Size = new Size(188, 58);
+            buttonSaveOrder.Size = new Size(285, 58);
             buttonSaveOrder.TabIndex = 31;
             buttonSaveOrder.Text = "Save Order";
             buttonSaveOrder.UseVisualStyleBackColor = false;
@@ -318,9 +321,10 @@
             // buttonRemoveOrder
             // 
             buttonRemoveOrder.BackColor = Color.LightCoral;
-            buttonRemoveOrder.Location = new Point(1592, 1017);
+            buttonRemoveOrder.Font = new Font("Algerian", 9.900001F, FontStyle.Bold | FontStyle.Italic);
+            buttonRemoveOrder.Location = new Point(483, 1004);
             buttonRemoveOrder.Name = "buttonRemoveOrder";
-            buttonRemoveOrder.Size = new Size(235, 58);
+            buttonRemoveOrder.Size = new Size(330, 58);
             buttonRemoveOrder.TabIndex = 32;
             buttonRemoveOrder.Text = "Remove Order";
             buttonRemoveOrder.UseVisualStyleBackColor = false;
@@ -385,6 +389,7 @@
             // buttonAddItem
             // 
             buttonAddItem.BackColor = Color.BurlyWood;
+            buttonAddItem.Font = new Font("Algerian", 9.900001F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
             buttonAddItem.Location = new Point(667, 297);
             buttonAddItem.Name = "buttonAddItem";
             buttonAddItem.Size = new Size(188, 58);
@@ -451,9 +456,7 @@
             tabPage1.Controls.Add(label5);
             tabPage1.Controls.Add(label6);
             tabPage1.Controls.Add(label12);
-            tabPage1.Controls.Add(buttonRemoveOrder);
             tabPage1.Controls.Add(richTextBoxNote);
-            tabPage1.Controls.Add(buttonSaveOrder);
             tabPage1.Controls.Add(textBoxShipFee);
             tabPage1.Controls.Add(richTextBoxToPay);
             tabPage1.Controls.Add(label10);
@@ -478,7 +481,7 @@
             groupBox6.Size = new Size(748, 1091);
             groupBox6.TabIndex = 38;
             groupBox6.TabStop = false;
-            groupBox6.Text = "groupBox6";
+            groupBox6.Text = "Statistic";
             // 
             // richTextBoxOverall
             // 
@@ -491,6 +494,8 @@
             // groupBox3
             // 
             groupBox3.BackColor = Color.CadetBlue;
+            groupBox3.Controls.Add(buttonSaveOrder);
+            groupBox3.Controls.Add(buttonRemoveOrder);
             groupBox3.Location = new Point(1035, 22);
             groupBox3.Name = "groupBox3";
             groupBox3.Size = new Size(929, 1094);
@@ -520,7 +525,7 @@
             // 
             comboBoxSorting.FormattingEnabled = true;
             comboBoxSorting.Items.AddRange(new object[] { "By Shipping Time" });
-            comboBoxSorting.Location = new Point(1051, 55);
+            comboBoxSorting.Location = new Point(1538, 38);
             comboBoxSorting.Name = "comboBoxSorting";
             comboBoxSorting.Size = new Size(302, 49);
             comboBoxSorting.TabIndex = 12;
@@ -528,7 +533,8 @@
             // buttonSorting
             // 
             buttonSorting.BackColor = Color.RosyBrown;
-            buttonSorting.Location = new Point(815, 53);
+            buttonSorting.Font = new Font("Cooper Black", 9F);
+            buttonSorting.Location = new Point(1335, 35);
             buttonSorting.Name = "buttonSorting";
             buttonSorting.Size = new Size(188, 58);
             buttonSorting.TabIndex = 11;
@@ -546,7 +552,7 @@
             // 
             // textBoxSearchOrder
             // 
-            textBoxSearchOrder.Location = new Point(439, 59);
+            textBoxSearchOrder.Location = new Point(836, 42);
             textBoxSearchOrder.Name = "textBoxSearchOrder";
             textBoxSearchOrder.Size = new Size(316, 47);
             textBoxSearchOrder.TabIndex = 3;
@@ -554,7 +560,8 @@
             // buttonSearchOrder
             // 
             buttonSearchOrder.BackColor = Color.MediumAquamarine;
-            buttonSearchOrder.Location = new Point(248, 59);
+            buttonSearchOrder.Font = new Font("Cooper Black", 9F);
+            buttonSearchOrder.Location = new Point(645, 42);
             buttonSearchOrder.Name = "buttonSearchOrder";
             buttonSearchOrder.Size = new Size(176, 52);
             buttonSearchOrder.TabIndex = 2;
@@ -565,9 +572,10 @@
             // buttonLoadOrders
             // 
             buttonLoadOrders.BackColor = Color.PaleGoldenrod;
-            buttonLoadOrders.Location = new Point(6, 56);
+            buttonLoadOrders.Font = new Font("Cooper Black", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            buttonLoadOrders.Location = new Point(202, 38);
             buttonLoadOrders.Name = "buttonLoadOrders";
-            buttonLoadOrders.Size = new Size(205, 55);
+            buttonLoadOrders.Size = new Size(253, 55);
             buttonLoadOrders.TabIndex = 1;
             buttonLoadOrders.Text = "Load Orders";
             buttonLoadOrders.UseVisualStyleBackColor = false;
@@ -637,7 +645,8 @@
             // buttonUpdate
             // 
             buttonUpdate.BackColor = Color.Orange;
-            buttonUpdate.Location = new Point(19, 232);
+            buttonUpdate.Font = new Font("Cooper Black", 9F);
+            buttonUpdate.Location = new Point(133, 233);
             buttonUpdate.Name = "buttonUpdate";
             buttonUpdate.Size = new Size(188, 58);
             buttonUpdate.TabIndex = 7;
@@ -668,14 +677,22 @@
             groupBox5.TabStop = false;
             groupBox5.Text = "Item";
             // 
+            // richTextBoxStatistic
+            // 
+            richTextBoxStatistic.Location = new Point(1724, 122);
+            richTextBoxStatistic.Name = "richTextBoxStatistic";
+            richTextBoxStatistic.Size = new Size(972, 945);
+            richTextBoxStatistic.TabIndex = 2;
+            richTextBoxStatistic.Text = "";
+            // 
             // buttonStatisticItem
             // 
             buttonStatisticItem.BackColor = Color.PeachPuff;
-            buttonStatisticItem.Font = new Font("Showcard Gothic", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            buttonStatisticItem.Font = new Font("Showcard Gothic", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             buttonStatisticItem.ForeColor = SystemColors.MenuHighlight;
-            buttonStatisticItem.Location = new Point(729, 49);
+            buttonStatisticItem.Location = new Point(729, 40);
             buttonStatisticItem.Name = "buttonStatisticItem";
-            buttonStatisticItem.Size = new Size(188, 58);
+            buttonStatisticItem.Size = new Size(247, 67);
             buttonStatisticItem.TabIndex = 1;
             buttonStatisticItem.Text = "Tell Me";
             buttonStatisticItem.UseVisualStyleBackColor = false;
@@ -690,14 +707,6 @@
             dataGridViewItem.Size = new Size(1624, 945);
             dataGridViewItem.TabIndex = 0;
             dataGridViewItem.CellValueChanged += dataGridViewItem_CellValueChanged;
-            // 
-            // richTextBoxStatistic
-            // 
-            richTextBoxStatistic.Location = new Point(1724, 122);
-            richTextBoxStatistic.Name = "richTextBoxStatistic";
-            richTextBoxStatistic.Size = new Size(972, 945);
-            richTextBoxStatistic.TabIndex = 2;
-            richTextBoxStatistic.Text = "";
             // 
             // Form1
             // 
@@ -716,6 +725,7 @@
             tabPage1.ResumeLayout(false);
             tabPage1.PerformLayout();
             groupBox6.ResumeLayout(false);
+            groupBox3.ResumeLayout(false);
             tabPage2.ResumeLayout(false);
             tabPage2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridViewOrder).EndInit();

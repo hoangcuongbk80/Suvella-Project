@@ -392,6 +392,7 @@ namespace Suvella
             }
             completeCurrentOrder();
             saveToFile();
+            orders.Add(currentOrder);
             dataGridViewItem.DataSource = null;
             dataGridViewOrder.DataSource = null;
             richTextBoxOrderDetails.Clear();
