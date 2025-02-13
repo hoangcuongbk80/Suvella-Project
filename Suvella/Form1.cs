@@ -22,12 +22,11 @@ namespace Suvella
         private List<Order> orders = new List<Order>();
         private List<Order> filteredOrders = new List<Order>();
         private DataTable dataTable;
-
+        bool initial_flag = true;
         public Form1()
         {
             InitializeComponent();
         }
-
         private void Form1_Load(object sender, EventArgs e)
         {
             string menuFilePath = "menu.xlsx";
@@ -47,6 +46,8 @@ namespace Suvella
             InitializeCurrentOrder();
             comboBoxSorting.SelectedIndex = 0;
             loadOrders();
+            SummarizeOrdersInfo();
+            initial_flag = false;
         }
         private void InitializeCurrentOrder()
         {
@@ -103,7 +104,6 @@ namespace Suvella
                 MessageBox.Show("Error loading menu data: " + ex.Message);
             }
         }
-
         private void LoadCustomerData(string filePath)
         {
             try
@@ -130,7 +130,6 @@ namespace Suvella
                 MessageBox.Show("Error loading customer data: " + ex.Message);
             }
         }
-
         private void SetUpCustomerAutoComplete()
         {
             // Set up AutoComplete for customer name (using TextBox)
@@ -149,7 +148,6 @@ namespace Suvella
             // Assign the AutoComplete collection to the TextBox
             textBoxCustomerName.AutoCompleteCustomSource = customerNames;
         }
-
         private void textBoxCustomerName_TextChanged(object sender, EventArgs e)
         {
             // Get the customer name typed in the TextBox
@@ -184,7 +182,6 @@ namespace Suvella
                 textBoxCustomerAddress.Clear();
             }
         }
-
         private void listBoxCustomerSuggestions_SelectedIndexChanged(object sender, EventArgs e)
         {
             // Get the selected customer information from the ListBox
@@ -244,7 +241,6 @@ namespace Suvella
                 }
             }
         }
-
         private void textBoxQuantity_TextChanged(object sender, EventArgs e)
         {
             // Get the selected item from the comboBox
@@ -264,7 +260,6 @@ namespace Suvella
                 }
             }
         }
-
         private void buttonAddItem_Click(object sender, EventArgs e)
         {
             // Get the selected item from the comboBox
@@ -302,12 +297,10 @@ namespace Suvella
         {
             UpdateOrderSummary();
         }
-
         private void textBoxDiscount_TextChanged(object sender, EventArgs e)
         {
             UpdateOrderSummary();
         }
-
         private void UpdateOrderSummary()
         {
             decimal shippingFee = 0;
@@ -337,7 +330,6 @@ namespace Suvella
             richTextBoxToPay.AppendText($"-------------------\n");
             richTextBoxToPay.AppendText($"Final: {currentOrder.FinalPayment:N0}");
         }
-
         private void buttonAdd_Click(object sender, EventArgs e)
         {
             // Try to get the current quantity from the TextBox
@@ -355,7 +347,6 @@ namespace Suvella
                 MessageBox.Show("Please enter a valid quantity.");
             }
         }
-
         private void buttonMinus_Click(object sender, EventArgs e)
         {
             int currentQuantity = 0;
@@ -377,7 +368,6 @@ namespace Suvella
                 MessageBox.Show("Please enter a valid quantity.");
             }
         }
-
         private void buttonSaveOrder_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(textBoxCustomerName.Text))
@@ -397,8 +387,9 @@ namespace Suvella
             dataGridViewOrder.DataSource = null;
             richTextBoxOrderDetails.Clear();
             SummarizeOrdersInfo();
+            richTextBoxOverall.Text += "\n\n\n============================\n\n";
+            richTextBoxOverall.Text += "- Saved a new order of " + currentOrder.Customer.Name; 
         }
-
         private void completeCurrentOrder()
         {
             currentOrder.Customer.Name = textBoxCustomerName.Text;
@@ -412,7 +403,6 @@ namespace Suvella
             currentOrder.PaymentStatus = "Unpaid";
             currentOrder.OrderStatus = "Processing";
         }
-
         private void saveToFile()
         {
             string filePath = "orders.xlsx";  // Make sure to adjust the path
@@ -507,7 +497,6 @@ namespace Suvella
 
             MessageBox.Show("Order removed successfully!");
         }
-
         private void buttonSaveNewCustomer_Click(object sender, EventArgs e)
         {
             string filePath = "customers.xlsx";  // Ensure the path is correct
@@ -545,7 +534,6 @@ namespace Suvella
 
             }
         }
-
         private void SummarizeOrdersInfo()
         {
             // Initialize a StringBuilder to build the summary
@@ -621,8 +609,6 @@ namespace Suvella
             richTextBoxStatistic.Text = summary.ToString();
 
         }
-
-
 
         //----------------------------Manage Orders---------------------------
         private void buttonLoadOrders_Click(object sender, EventArgs e)
@@ -717,7 +703,8 @@ namespace Suvella
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error loading orders: " + ex.Message);
+                if(!initial_flag)
+                    MessageBox.Show("Error loading orders: " + ex.Message);
             }
             filteredOrders = orders;
         }
@@ -835,14 +822,11 @@ namespace Suvella
                 MessageBox.Show("Error saving orders: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-
         private void sortingByShippingTime()
         {
             filteredOrders = orders.OrderBy(order => order.ShippingTime).ToList();
             bindDataGridView(filteredOrders); // Rebind the DataGridView after sorting
         }
-
         private void dataGridViewOrder_SelectionChanged(object sender, EventArgs e)
         {
             if (dataGridViewOrder.SelectedRows.Count > 0)
@@ -887,7 +871,6 @@ namespace Suvella
                 comboBoxPaymentStatus.SelectedItem = selectedOrder.PaymentStatus;
             }
         }
-
         private void buttonUpdate_Click(object sender, EventArgs e)
         {
             if (dataGridViewOrder.SelectedRows.Count > 0)
@@ -930,6 +913,7 @@ namespace Suvella
                     comboBoxPaymentStatus.SelectedIndex = -1;
                     dataGridViewItem.DataSource = null;
                     richTextBoxOrderDetails.Clear();
+                    richTextBoxOrderDetails.Text = "Updated!";
                 }
                 else
                 {
@@ -943,7 +927,6 @@ namespace Suvella
                 MessageBox.Show("Please select an order first.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
-
         private void SaveUpdatedOrdersToExcel()
         {
             string filePath = "orders.xlsx";  // Make sure this path is correct
@@ -1093,6 +1076,11 @@ namespace Suvella
 
             // Bind the DataTable to the DataGridView
             dataGridViewItem.DataSource = itemDataTable;
+
+            dataGridViewItem.Columns["Processing Quantity"].ReadOnly = true;
+            dataGridViewItem.Columns["Shipped Quantity"].ReadOnly = true;
+            dataGridViewItem.Columns["Inventory Quantity"].ReadOnly = true;
+
             foreach (DataGridViewColumn column in dataGridViewItem.Columns)
             {
                 column.SortMode = DataGridViewColumnSortMode.NotSortable;
