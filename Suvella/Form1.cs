@@ -1,11 +1,14 @@
+using Microsoft.VisualBasic;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Suvella
 {
@@ -42,6 +45,7 @@ namespace Suvella
             }
 
             InitializeCurrentOrder();
+            comboBoxSorting.SelectedIndex = 0;
         }
         private void InitializeCurrentOrder()
         {
@@ -457,7 +461,7 @@ namespace Suvella
 
                 // Shipping Info
                 worksheet.Cells[row, 5].Value = currentOrder.ShippingAddress;  // Shipping Address
-                worksheet.Cells[row, 6].Value = currentOrder.OrderTime.ToString("yyyy-MM-dd HH:mm");  // Shipping Time (Order Time)
+                worksheet.Cells[row, 6].Value = currentOrder.ShippingTime.ToString("dd/MM/yyyy");  // Shipping Time (Order Time)
 
                 // Payment Info
                 worksheet.Cells[row, 7].Value = currentOrder.FinalPayment;  // Total Payment
@@ -476,7 +480,7 @@ namespace Suvella
                 worksheet.Cells[row, 12].Value = currentOrder.Discount.ToString();  // Discount Amount
 
                 // Order Time
-                worksheet.Cells[row, 13].Value = currentOrder.OrderTime.ToString("yyyy-MM-dd HH:mm");  // Order Time
+                worksheet.Cells[row, 13].Value = currentOrder.OrderTime.ToString("dd/MM/yyyy");  // Order Time
 
                 // Save the changes to the file
                 package.Save();
@@ -566,20 +570,31 @@ namespace Suvella
                             Address = worksheet.Cells[row, 3].Text.Trim(), // Customer Address in column 3
                         };
 
+                        // Define the format to parse the date in 'dd/MM/yyyy' format
+                        string dateFormat = "dd/MM/yyyy";
+
                         // Initialize the order object and populate its properties
                         var order = new Order(customer)
                         {
                             ShippingAddress = worksheet.Cells[row, 5].Text.Trim(),  // Shipping Address in column 5
-                            ShippingTime = DateTime.TryParse(worksheet.Cells[row, 6].Text, out var shippingTime) ? shippingTime : DateTime.MinValue,  // Order Time in column 13
 
-                            OrderTime = DateTime.TryParse(worksheet.Cells[row, 13].Text, out var orderTime) ? orderTime : DateTime.MinValue,  // Order Time in column 13
+                            // Parse ShippingTime with the specified format
+                            ShippingTime = DateTime.TryParseExact(worksheet.Cells[row, 6].Text, dateFormat,
+                                                                   CultureInfo.InvariantCulture, DateTimeStyles.None, out var shippingTime)
+                                                                   ? shippingTime : DateTime.MinValue,  // ShippingTime column 6
+
+                            // Parse OrderTime with the specified format
+                            OrderTime = DateTime.TryParseExact(worksheet.Cells[row, 13].Text, dateFormat,
+                                                                CultureInfo.InvariantCulture, DateTimeStyles.None, out var orderTime)
+                                                                ? orderTime : DateTime.MinValue,  // OrderTime column 13
+
                             Discount = decimal.TryParse(worksheet.Cells[row, 12].Text, out var discount) ? discount : 0,  // Discount in column 12
                             FinalPayment = decimal.TryParse(worksheet.Cells[row, 7].Text, out var finalPayment) ? finalPayment : 0, // Final Payment in column 7
                             PaymentStatus = worksheet.Cells[row, 8].Text.Trim(),  // Payment Status in column 8
                             OrderStatus = worksheet.Cells[row, 9].Text.Trim(),  // Order Status in column 9
                             Feedback = worksheet.Cells[row, 10].Text.Trim(),  // Feedback in column 10
                             Note = worksheet.Cells[row, 11].Text.Trim(),  // Order Note in column 11
-                            OrderID = row.ToString(),
+                            OrderID = row.ToString(),  // Order ID
                         };
 
                         // Parse the "Items" column (column 4) into individual order items
@@ -632,6 +647,7 @@ namespace Suvella
                 dataTable.Columns.Add("Customer Name");
                 dataTable.Columns.Add("Phone");
                 dataTable.Columns.Add("Final Payment");
+                dataTable.Columns.Add("Shipping Time");
                 dataTable.Columns.Add("Payment Status");
                 dataTable.Columns.Add("Order Status");
             }
@@ -649,6 +665,7 @@ namespace Suvella
                 row["Customer Name"] = order.Customer.Name;
                 row["Phone"] = order.Customer.Phone;
                 row["Final Payment"] = order.FinalPayment;
+                row["Shipping Time"] = order.ShippingTime.ToString("dd/MM/yyyy");
                 row["Payment Status"] = order.PaymentStatus;
                 row["Order Status"] = order.OrderStatus;
 
@@ -671,7 +688,8 @@ namespace Suvella
             filteredOrders = orders.Where(order =>
                 order.Customer.Name.ToLower().Contains(searchTerm) ||        // Search by customer name
                 order.OrderStatus.ToLower().Contains(searchTerm) ||          // Search by order status
-                order.PaymentStatus.ToLower().Contains(searchTerm)           // Search by payment status
+                order.PaymentStatus.ToLower().Contains(searchTerm) ||
+                order.ShippingTime.ToString("dd/MM/yyyy").Contains(searchTerm)
             ).ToList();
 
             // Use bindDataGridView to bind the filtered orders to the DataGridView
@@ -682,6 +700,60 @@ namespace Suvella
             {
                 MessageBox.Show("No orders found matching the search criteria.", "Search Result", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+        }
+
+        private void buttonSorting_Click(object sender, EventArgs e)
+        {
+            if(comboBoxSorting.Text == "By Shipping Time")
+                sortingByShippingTime();
+            orders = filteredOrders;
+            SaveOrdersToExcel(orders);
+        }
+        private void SaveOrdersToExcel(List<Order> listOrders)
+        {
+            string filePath = "orders.xlsx";  // Make sure this path is correct
+
+            try
+            {
+                using (var package = new ExcelPackage(new FileInfo(filePath)))
+                {
+                    var worksheet = package.Workbook.Worksheets[0];  // Assuming data is in the first sheet
+
+                    // Loop through the orders and update the Excel file
+                    for (int row = 2; row <= worksheet.Dimension.End.Row; row++) // Assuming data starts from row 2
+                    {
+                        var order = listOrders[row - 2]; // Map rows to orders list
+
+                        // Update the order status and payment status in the Excel sheet
+                        worksheet.Cells[row, 9].Value = order.OrderStatus; // Order Status is in column 9
+                        worksheet.Cells[row, 8].Value = order.PaymentStatus; // Payment Status is in column 8
+                        worksheet.Cells[row, 5].Value = order.ShippingAddress; // Shipping Address is in column 5
+                        worksheet.Cells[row, 6].Value = order.ShippingTime.ToString("dd/MM/yyyy"); // Shipping Time is in column 6
+                        worksheet.Cells[row, 7].Value = order.FinalPayment; // Final Payment is in column 7
+                        worksheet.Cells[row, 12].Value = order.Discount; // Discount is in column 12
+                        worksheet.Cells[row, 10].Value = order.Feedback; // Feedback is in column 10
+                        worksheet.Cells[row, 11].Value = order.Note; // Order Note is in column 11
+
+                        // For the items, you may want to format the order items into a string format for saving
+                        string itemsInfo = string.Join("\n", order.OrderItems.Select(item => $"{item.ItemName}: {item.Quantity}"));
+                        worksheet.Cells[row, 4].Value = itemsInfo; // Items in column 4
+                    }
+
+                    // Save the changes to the Excel file
+                    package.Save();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error saving orders: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
+        private void sortingByShippingTime()
+        {
+            filteredOrders = orders.OrderBy(order => order.ShippingTime).ToList();
+            bindDataGridView(filteredOrders); // Rebind the DataGridView after sorting
         }
 
         private void dataGridViewOrder_SelectionChanged(object sender, EventArgs e)
@@ -706,9 +778,9 @@ namespace Suvella
                 orderInfo.AppendLine("Order Status: " + selectedOrder.OrderStatus);
                 orderInfo.AppendLine("----------------------------------");
                 orderInfo.AppendLine("Shipping Address: " + selectedOrder.ShippingAddress);
-                orderInfo.AppendLine("Shipping Time: " + selectedOrder.ShippingTime.ToString("yyyy-MM-dd HH:mm"));
+                orderInfo.AppendLine("Shipping Time: " + selectedOrder.ShippingTime.ToString("dd/MM/yyyy"));
                 orderInfo.AppendLine("----------------------------------");
-                orderInfo.AppendLine("Order Time: " + selectedOrder.OrderTime.ToString("yyyy-MM-dd HH:mm"));
+                orderInfo.AppendLine("Order Time: " + selectedOrder.OrderTime.ToString("dd/MM/yyyy"));
                 orderInfo.AppendLine("Discount: " + selectedOrder.Discount);
                 orderInfo.AppendLine("Order Note: " + selectedOrder.Note);
                 orderInfo.AppendLine("Feedback: " + selectedOrder.Feedback);
@@ -760,7 +832,7 @@ namespace Suvella
                     }
 
                     // Save the orders to Excel after update
-                    SaveOrdersToExcel();
+                    SaveUpdatedOrdersToExcel();
 
                     // Refresh the DataGridView to reflect the updated status
                     bindDataGridView(filteredOrders);
@@ -785,7 +857,7 @@ namespace Suvella
             }
         }
 
-        private void SaveOrdersToExcel()
+        private void SaveUpdatedOrdersToExcel()
         {
             string filePath = "orders.xlsx";  // Make sure this path is correct
 
@@ -821,6 +893,7 @@ namespace Suvella
         {
             loadOrders();
             doStatistic();
+            saveToProductionTargetFile();
         }
 
         private void doStatistic()
@@ -1014,7 +1087,5 @@ namespace Suvella
                 MessageBox.Show("Error saving data to Excel: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-         
     }
 }

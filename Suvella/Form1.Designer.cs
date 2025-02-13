@@ -66,6 +66,8 @@
             tabPage1 = new TabPage();
             groupBox3 = new GroupBox();
             tabPage2 = new TabPage();
+            comboBoxSorting = new ComboBox();
+            buttonSorting = new Button();
             richTextBoxOrderDetails = new RichTextBox();
             textBoxSearchOrder = new TextBox();
             buttonSearchOrder = new Button();
@@ -428,7 +430,7 @@
             tabControl1.Location = new Point(0, 1);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(2021, 1213);
+            tabControl1.Size = new Size(2816, 1276);
             tabControl1.TabIndex = 37;
             // 
             // tabPage1
@@ -457,7 +459,7 @@
             tabPage1.Location = new Point(10, 58);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(2001, 1145);
+            tabPage1.Size = new Size(2796, 1208);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Place Order";
             tabPage1.UseVisualStyleBackColor = true;
@@ -474,6 +476,8 @@
             // 
             // tabPage2
             // 
+            tabPage2.Controls.Add(comboBoxSorting);
+            tabPage2.Controls.Add(buttonSorting);
             tabPage2.Controls.Add(richTextBoxOrderDetails);
             tabPage2.Controls.Add(textBoxSearchOrder);
             tabPage2.Controls.Add(buttonSearchOrder);
@@ -483,14 +487,34 @@
             tabPage2.Location = new Point(10, 58);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(2001, 1145);
+            tabPage2.Size = new Size(2796, 1208);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Manage Order";
             tabPage2.UseVisualStyleBackColor = true;
             // 
+            // comboBoxSorting
+            // 
+            comboBoxSorting.FormattingEnabled = true;
+            comboBoxSorting.Items.AddRange(new object[] { "By Shipping Time" });
+            comboBoxSorting.Location = new Point(1051, 55);
+            comboBoxSorting.Name = "comboBoxSorting";
+            comboBoxSorting.Size = new Size(302, 49);
+            comboBoxSorting.TabIndex = 12;
+            // 
+            // buttonSorting
+            // 
+            buttonSorting.BackColor = Color.RosyBrown;
+            buttonSorting.Location = new Point(815, 53);
+            buttonSorting.Name = "buttonSorting";
+            buttonSorting.Size = new Size(188, 58);
+            buttonSorting.TabIndex = 11;
+            buttonSorting.Text = "Sorting";
+            buttonSorting.UseVisualStyleBackColor = false;
+            buttonSorting.Click += buttonSorting_Click;
+            // 
             // richTextBoxOrderDetails
             // 
-            richTextBoxOrderDetails.Location = new Point(1308, 459);
+            richTextBoxOrderDetails.Location = new Point(2083, 473);
             richTextBoxOrderDetails.Name = "richTextBoxOrderDetails";
             richTextBoxOrderDetails.Size = new Size(687, 680);
             richTextBoxOrderDetails.TabIndex = 4;
@@ -498,7 +522,7 @@
             // 
             // textBoxSearchOrder
             // 
-            textBoxSearchOrder.Location = new Point(971, 56);
+            textBoxSearchOrder.Location = new Point(439, 59);
             textBoxSearchOrder.Name = "textBoxSearchOrder";
             textBoxSearchOrder.Size = new Size(316, 47);
             textBoxSearchOrder.TabIndex = 3;
@@ -506,7 +530,7 @@
             // buttonSearchOrder
             // 
             buttonSearchOrder.BackColor = Color.MediumAquamarine;
-            buttonSearchOrder.Location = new Point(780, 56);
+            buttonSearchOrder.Location = new Point(248, 59);
             buttonSearchOrder.Name = "buttonSearchOrder";
             buttonSearchOrder.Size = new Size(176, 52);
             buttonSearchOrder.TabIndex = 2;
@@ -531,7 +555,7 @@
             dataGridViewOrder.Location = new Point(6, 120);
             dataGridViewOrder.Name = "dataGridViewOrder";
             dataGridViewOrder.RowHeadersWidth = 102;
-            dataGridViewOrder.Size = new Size(1281, 1019);
+            dataGridViewOrder.Size = new Size(2052, 1019);
             dataGridViewOrder.TabIndex = 0;
             dataGridViewOrder.SelectionChanged += dataGridViewOrder_SelectionChanged;
             // 
@@ -543,7 +567,7 @@
             groupBox4.Controls.Add(label4);
             groupBox4.Controls.Add(comboBoxOrderStatus);
             groupBox4.Controls.Add(buttonUpdate);
-            groupBox4.Location = new Point(1308, 120);
+            groupBox4.Location = new Point(2083, 134);
             groupBox4.Name = "groupBox4";
             groupBox4.Size = new Size(563, 310);
             groupBox4.TabIndex = 10;
@@ -603,7 +627,7 @@
             tabPage3.Location = new Point(10, 58);
             tabPage3.Name = "tabPage3";
             tabPage3.Padding = new Padding(3);
-            tabPage3.Size = new Size(2001, 1145);
+            tabPage3.Size = new Size(2796, 1208);
             tabPage3.TabIndex = 2;
             tabPage3.Text = "Statistic";
             tabPage3.UseVisualStyleBackColor = true;
@@ -614,7 +638,7 @@
             groupBox5.Controls.Add(dataGridViewItem);
             groupBox5.Location = new Point(29, 29);
             groupBox5.Name = "groupBox5";
-            groupBox5.Size = new Size(1926, 1084);
+            groupBox5.Size = new Size(2160, 1084);
             groupBox5.TabIndex = 0;
             groupBox5.TabStop = false;
             groupBox5.Text = "Item";
@@ -635,7 +659,7 @@
             dataGridViewItem.Location = new Point(18, 122);
             dataGridViewItem.Name = "dataGridViewItem";
             dataGridViewItem.RowHeadersWidth = 102;
-            dataGridViewItem.Size = new Size(1883, 945);
+            dataGridViewItem.Size = new Size(2111, 945);
             dataGridViewItem.TabIndex = 0;
             dataGridViewItem.CellValueChanged += dataGridViewItem_CellValueChanged;
             // 
@@ -643,7 +667,7 @@
             // 
             AutoScaleDimensions = new SizeF(17F, 41F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(2023, 1289);
+            ClientSize = new Size(2842, 1289);
             Controls.Add(tabControl1);
             Name = "Form1";
             Text = "Suvella";
@@ -720,5 +744,7 @@
         private GroupBox groupBox5;
         private Button buttonStatisticItem;
         private DataGridView dataGridViewItem;
+        private ComboBox comboBoxSorting;
+        private Button buttonSorting;
     }
 }
