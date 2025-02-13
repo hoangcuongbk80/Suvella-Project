@@ -14,7 +14,7 @@ namespace Suvella
         public string ShippingAddress { get; set; }
         public string ShippingMethod { get; set; }
         public string OrderID { get; set; }
-        public decimal Discount { get; set; }  // Shipping Fee
+        public decimal Discount { get; set; }  
         public decimal ShippingFee { get; set; }  // Shipping Fee
         public decimal FinalPayment { get; set; }  // Final price
         public DateTime ShippingTime { get; set; }  // Shipping Date/Time

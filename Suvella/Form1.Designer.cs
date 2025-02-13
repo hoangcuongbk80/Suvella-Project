@@ -64,6 +64,8 @@
             label2 = new Label();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
+            groupBox6 = new GroupBox();
+            richTextBoxOverall = new RichTextBox();
             groupBox3 = new GroupBox();
             tabPage2 = new TabPage();
             comboBoxSorting = new ComboBox();
@@ -83,10 +85,12 @@
             groupBox5 = new GroupBox();
             buttonStatisticItem = new Button();
             dataGridViewItem = new DataGridView();
+            richTextBoxStatistic = new RichTextBox();
             groupBox2.SuspendLayout();
             groupBox1.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
+            groupBox6.SuspendLayout();
             tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridViewOrder).BeginInit();
             groupBox4.SuspendLayout();
@@ -151,6 +155,7 @@
             textBoxCustomerAddress.Name = "textBoxCustomerAddress";
             textBoxCustomerAddress.Size = new Size(888, 47);
             textBoxCustomerAddress.TabIndex = 17;
+            textBoxCustomerAddress.TextChanged += textBoxCustomerAddress_TextChanged;
             // 
             // listBoxCustomerSuggestions
             // 
@@ -435,6 +440,7 @@
             // 
             // tabPage1
             // 
+            tabPage1.Controls.Add(groupBox6);
             tabPage1.Controls.Add(listBoxCustomerSuggestions);
             tabPage1.Controls.Add(label1);
             tabPage1.Controls.Add(groupBox2);
@@ -463,6 +469,24 @@
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Place Order";
             tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // groupBox6
+            // 
+            groupBox6.Controls.Add(richTextBoxOverall);
+            groupBox6.Location = new Point(2025, 26);
+            groupBox6.Name = "groupBox6";
+            groupBox6.Size = new Size(748, 1091);
+            groupBox6.TabIndex = 38;
+            groupBox6.TabStop = false;
+            groupBox6.Text = "groupBox6";
+            // 
+            // richTextBoxOverall
+            // 
+            richTextBoxOverall.Location = new Point(26, 53);
+            richTextBoxOverall.Name = "richTextBoxOverall";
+            richTextBoxOverall.Size = new Size(699, 1014);
+            richTextBoxOverall.TabIndex = 0;
+            richTextBoxOverall.Text = "";
             // 
             // groupBox3
             // 
@@ -634,23 +658,27 @@
             // 
             // groupBox5
             // 
+            groupBox5.Controls.Add(richTextBoxStatistic);
             groupBox5.Controls.Add(buttonStatisticItem);
             groupBox5.Controls.Add(dataGridViewItem);
             groupBox5.Location = new Point(29, 29);
             groupBox5.Name = "groupBox5";
-            groupBox5.Size = new Size(2160, 1084);
+            groupBox5.Size = new Size(2733, 1084);
             groupBox5.TabIndex = 0;
             groupBox5.TabStop = false;
             groupBox5.Text = "Item";
             // 
             // buttonStatisticItem
             // 
-            buttonStatisticItem.Location = new Point(883, 58);
+            buttonStatisticItem.BackColor = Color.PeachPuff;
+            buttonStatisticItem.Font = new Font("Showcard Gothic", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            buttonStatisticItem.ForeColor = SystemColors.MenuHighlight;
+            buttonStatisticItem.Location = new Point(729, 49);
             buttonStatisticItem.Name = "buttonStatisticItem";
             buttonStatisticItem.Size = new Size(188, 58);
             buttonStatisticItem.TabIndex = 1;
             buttonStatisticItem.Text = "Tell Me";
-            buttonStatisticItem.UseVisualStyleBackColor = true;
+            buttonStatisticItem.UseVisualStyleBackColor = false;
             buttonStatisticItem.Click += buttonStatisticItem_Click;
             // 
             // dataGridViewItem
@@ -659,9 +687,17 @@
             dataGridViewItem.Location = new Point(18, 122);
             dataGridViewItem.Name = "dataGridViewItem";
             dataGridViewItem.RowHeadersWidth = 102;
-            dataGridViewItem.Size = new Size(2111, 945);
+            dataGridViewItem.Size = new Size(1624, 945);
             dataGridViewItem.TabIndex = 0;
             dataGridViewItem.CellValueChanged += dataGridViewItem_CellValueChanged;
+            // 
+            // richTextBoxStatistic
+            // 
+            richTextBoxStatistic.Location = new Point(1724, 122);
+            richTextBoxStatistic.Name = "richTextBoxStatistic";
+            richTextBoxStatistic.Size = new Size(972, 945);
+            richTextBoxStatistic.TabIndex = 2;
+            richTextBoxStatistic.Text = "";
             // 
             // Form1
             // 
@@ -679,6 +715,7 @@
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
             tabPage1.PerformLayout();
+            groupBox6.ResumeLayout(false);
             tabPage2.ResumeLayout(false);
             tabPage2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridViewOrder).EndInit();
@@ -746,5 +783,8 @@
         private DataGridView dataGridViewItem;
         private ComboBox comboBoxSorting;
         private Button buttonSorting;
+        private GroupBox groupBox6;
+        private RichTextBox richTextBoxOverall;
+        private RichTextBox richTextBoxStatistic;
     }
 }

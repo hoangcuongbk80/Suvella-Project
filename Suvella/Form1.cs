@@ -46,6 +46,7 @@ namespace Suvella
 
             InitializeCurrentOrder();
             comboBoxSorting.SelectedIndex = 0;
+            loadOrders();
         }
         private void InitializeCurrentOrder()
         {
@@ -173,6 +174,7 @@ namespace Suvella
                 var selectedCustomer = matchingCustomers.First();
                 textBoxCustomerPhone.Text = selectedCustomer.Phone;
                 textBoxCustomerAddress.Text = selectedCustomer.Address;
+                textBoxShippingAddress.Text = selectedCustomer.Address;
             }
             else
             {
@@ -213,7 +215,10 @@ namespace Suvella
                 }
             }
         }
-
+        private void textBoxCustomerAddress_TextChanged(object sender, EventArgs e)
+        {
+            textBoxShippingAddress.Text = textBoxCustomerAddress.Text;
+        }
         private void comboBoxItems_SelectedIndexChanged(object sender, EventArgs e)
         {
             // Get the selected item from the comboBox
@@ -390,6 +395,7 @@ namespace Suvella
             dataGridViewItem.DataSource = null;
             dataGridViewOrder.DataSource = null;
             richTextBoxOrderDetails.Clear();
+            SummarizeOrdersInfo();
         }
 
         private void completeCurrentOrder()
@@ -539,6 +545,84 @@ namespace Suvella
             }
         }
 
+        private void SummarizeOrdersInfo()
+        {
+            // Initialize a StringBuilder to build the summary
+            StringBuilder summary = new StringBuilder();
+
+            // Calculate the total number of orders
+            int totalOrders = orders.Count;
+            summary.AppendLine($"Total Orders: {totalOrders}");
+
+            // Initialize variables to accumulate totals
+            decimal totalPayments = 0;
+            decimal totalPaid = 0;
+            decimal totalUnpaid = 0;
+
+            // Initialize dictionaries to store order status and payment status counts
+            var orderStatusCounts = new Dictionary<string, int>();
+            var paymentStatusCounts = new Dictionary<string, int>();
+
+            // Loop through the orders to accumulate the necessary information
+            foreach (var order in orders)
+            {
+                // Sum up the total payments
+                totalPayments += order.FinalPayment;
+
+                // Accumulate totals for paid and unpaid orders
+                if (order.PaymentStatus == "Paid")
+                {
+                    totalPaid += order.FinalPayment;
+                }
+                else if (order.PaymentStatus == "Unpaid")
+                {
+                    totalUnpaid += order.FinalPayment;
+                }
+
+                // Count order statuses
+                if (!orderStatusCounts.ContainsKey(order.OrderStatus))
+                {
+                    orderStatusCounts[order.OrderStatus] = 0;
+                }
+                orderStatusCounts[order.OrderStatus]++;
+
+                // Count payment statuses
+                if (!paymentStatusCounts.ContainsKey(order.PaymentStatus))
+                {
+                    paymentStatusCounts[order.PaymentStatus] = 0;
+                }
+                paymentStatusCounts[order.PaymentStatus]++;
+            }
+
+            // Append order status breakdown
+            summary.AppendLine($"----------------------------");
+            foreach (var status in orderStatusCounts)
+            {
+                summary.AppendLine($"{status.Key}: {status.Value} orders");
+            }
+
+            summary.AppendLine($"----------------------------");
+
+            // Append payment status breakdown
+            foreach (var status in paymentStatusCounts)
+            {
+                summary.AppendLine($"{status.Key}: {status.Value} orders");
+            }
+
+            summary.AppendLine($"----------------------------");
+
+            summary.AppendLine($"Paid: {totalPaid.ToString("N0")} vnd");
+            summary.AppendLine($"Unpaid: {totalUnpaid.ToString("N0")} vnd");
+            summary.AppendLine($"Total: {totalPayments.ToString("N0")} vnd");
+
+            // Display the summary in the RichTextBox
+            richTextBoxOverall.Text = summary.ToString();
+            richTextBoxStatistic.Text = summary.ToString();
+
+        }
+
+
+
         //----------------------------Manage Orders---------------------------
         private void buttonLoadOrders_Click(object sender, EventArgs e)
         {
@@ -650,6 +734,7 @@ namespace Suvella
                 dataTable.Columns.Add("Shipping Time");
                 dataTable.Columns.Add("Payment Status");
                 dataTable.Columns.Add("Order Status");
+                dataTable.Columns.Add("Ship Address");
             }
 
             // Clear any existing data in the DataTable
@@ -668,6 +753,7 @@ namespace Suvella
                 row["Shipping Time"] = order.ShippingTime.ToString("dd/MM/yyyy");
                 row["Payment Status"] = order.PaymentStatus;
                 row["Order Status"] = order.OrderStatus;
+                row["Ship Address"] = order.ShippingAddress;
 
                 dataTable.Rows.Add(row);
             }
@@ -704,7 +790,7 @@ namespace Suvella
 
         private void buttonSorting_Click(object sender, EventArgs e)
         {
-            if(comboBoxSorting.Text == "By Shipping Time")
+            if (comboBoxSorting.Text == "By Shipping Time")
                 sortingByShippingTime();
             orders = filteredOrders;
             SaveOrdersToExcel(orders);
@@ -833,6 +919,7 @@ namespace Suvella
 
                     // Save the orders to Excel after update
                     SaveUpdatedOrdersToExcel();
+                    SummarizeOrdersInfo();
 
                     // Refresh the DataGridView to reflect the updated status
                     bindDataGridView(filteredOrders);
@@ -842,7 +929,6 @@ namespace Suvella
                     comboBoxPaymentStatus.SelectedIndex = -1;
                     dataGridViewItem.DataSource = null;
                     richTextBoxOrderDetails.Clear();
-
                 }
                 else
                 {
@@ -894,6 +980,7 @@ namespace Suvella
             loadOrders();
             doStatistic();
             saveToProductionTargetFile();
+            SummarizeOrdersInfo();
         }
 
         private void doStatistic()
