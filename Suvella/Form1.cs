@@ -978,46 +978,53 @@ namespace Suvella
             saveToProductionTargetFile();
             SummarizeOrdersInfo();
         }
-
         private void doStatistic()
         {
+            // Get the start and end date from the DateTimePickers and reset the time to 00:00:00
+            DateTime startDate = dateTimePickerStart.Value.Date;  // Date only, time set to 00:00:00
+            DateTime endDate = dateTimePickerEnd.Value.Date.AddDays(1).AddTicks(-1);  // End of the selected day (23:59:59)
+
             // Dictionary to hold item statistics: {ItemName => (processingCount, shippedCount)}
             var itemStatistics = new Dictionary<string, (int processingCount, int shippedCount)>();
 
             // Loop through all orders to extract item information and statuses
             foreach (var order in orders)
             {
-                // Check if the order status is 'Processing' or 'Shipped' to categorize items
-                string orderStatus = order.OrderStatus.ToLower();  // Example: 'Processing' or 'Shipped'
-
-                // If order is in processing or shipped, loop through the items
-                foreach (var item in order.OrderItems)
+                // Check if the order has a shipping date that is between the selected start and end date (ignoring time)
+                if (order.ShippingTime.Date >= startDate && order.ShippingTime.Date <= endDate)
                 {
-                    // Determine which status to count the item under
-                    if (orderStatus == "processing")
+                    // Check if the order status is 'Processing' or 'Shipped' to categorize items
+                    string orderStatus = order.OrderStatus.ToLower();  // Example: 'Processing' or 'Shipped'
+
+                    // If order is in processing or shipped, loop through the items
+                    foreach (var item in order.OrderItems)
                     {
-                        // Add item to the 'processing' count
-                        if (itemStatistics.ContainsKey(item.ItemName))
+                        // Determine which status to count the item under
+                        if (orderStatus == "processing")
                         {
-                            var stats = itemStatistics[item.ItemName];
-                            itemStatistics[item.ItemName] = (stats.processingCount + item.Quantity, stats.shippedCount);
+                            // Add item to the 'processing' count
+                            if (itemStatistics.ContainsKey(item.ItemName))
+                            {
+                                var stats = itemStatistics[item.ItemName];
+                                itemStatistics[item.ItemName] = (stats.processingCount + item.Quantity, stats.shippedCount);
+                            }
+                            else
+                            {
+                                itemStatistics[item.ItemName] = (item.Quantity, 0);
+                            }
                         }
-                        else
+                        else if (orderStatus == "shipped")
                         {
-                            itemStatistics[item.ItemName] = (item.Quantity, 0);
-                        }
-                    }
-                    else if (orderStatus == "shipped")
-                    {
-                        // Add item to the 'shipped' count
-                        if (itemStatistics.ContainsKey(item.ItemName))
-                        {
-                            var stats = itemStatistics[item.ItemName];
-                            itemStatistics[item.ItemName] = (stats.processingCount, stats.shippedCount + item.Quantity);
-                        }
-                        else
-                        {
-                            itemStatistics[item.ItemName] = (0, item.Quantity);
+                            // Add item to the 'shipped' count
+                            if (itemStatistics.ContainsKey(item.ItemName))
+                            {
+                                var stats = itemStatistics[item.ItemName];
+                                itemStatistics[item.ItemName] = (stats.processingCount, stats.shippedCount + item.Quantity);
+                            }
+                            else
+                            {
+                                itemStatistics[item.ItemName] = (0, item.Quantity);
+                            }
                         }
                     }
                 }
@@ -1025,7 +1032,11 @@ namespace Suvella
 
             // Read inventory data from target_production.xlsx if it exists
             Dictionary<string, int> targetProductionData = new Dictionary<string, int>();
-            string targetProductionFilePath = "target_production.xlsx";
+
+            string startDateStr = dateTimePickerStart.Value.ToString("dd-MM-yyyy");
+            string endDateStr = dateTimePickerEnd.Value.ToString("dd-MM-yyyy");
+            string dateFileName = $"{startDateStr}_To_{endDateStr}.xlsx";
+            string targetProductionFilePath = Path.Combine("targetProduction", dateFileName);
 
             if (File.Exists(targetProductionFilePath))
             {
@@ -1162,7 +1173,10 @@ namespace Suvella
                     }
 
                     // Save the Excel file to disk
-                    string filePath = "target_production.xlsx"; // You can customize the file path
+                    string startDateStr = dateTimePickerStart.Value.ToString("dd-MM-yyyy");
+                    string endDateStr = dateTimePickerEnd.Value.ToString("dd-MM-yyyy");
+                    string dateFileName = $"{startDateStr}_To_{endDateStr}.xlsx";
+                    string filePath = Path.Combine("targetProduction", dateFileName);
                     FileInfo file = new FileInfo(filePath);
                     package.SaveAs(file);
 

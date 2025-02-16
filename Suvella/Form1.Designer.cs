@@ -82,9 +82,13 @@
             buttonUpdate = new Button();
             tabPage3 = new TabPage();
             groupBox5 = new GroupBox();
+            dateTimePickerEnd = new DateTimePicker();
+            dateTimePickerStart = new DateTimePicker();
             richTextBoxStatistic = new RichTextBox();
             buttonStatisticItem = new Button();
             dataGridViewItem = new DataGridView();
+            label15 = new Label();
+            label16 = new Label();
             groupBox2.SuspendLayout();
             groupBox1.SuspendLayout();
             tabControl1.SuspendLayout();
@@ -653,6 +657,10 @@
             // 
             // groupBox5
             // 
+            groupBox5.Controls.Add(label16);
+            groupBox5.Controls.Add(label15);
+            groupBox5.Controls.Add(dateTimePickerEnd);
+            groupBox5.Controls.Add(dateTimePickerStart);
             groupBox5.Controls.Add(richTextBoxStatistic);
             groupBox5.Controls.Add(buttonStatisticItem);
             groupBox5.Controls.Add(dataGridViewItem);
@@ -662,6 +670,20 @@
             groupBox5.TabIndex = 0;
             groupBox5.TabStop = false;
             groupBox5.Text = "Item";
+            // 
+            // dateTimePickerEnd
+            // 
+            dateTimePickerEnd.Location = new Point(1142, 60);
+            dateTimePickerEnd.Name = "dateTimePickerEnd";
+            dateTimePickerEnd.Size = new Size(500, 47);
+            dateTimePickerEnd.TabIndex = 4;
+            // 
+            // dateTimePickerStart
+            // 
+            dateTimePickerStart.Location = new Point(18, 60);
+            dateTimePickerStart.Name = "dateTimePickerStart";
+            dateTimePickerStart.Size = new Size(500, 47);
+            dateTimePickerStart.TabIndex = 3;
             // 
             // richTextBoxStatistic
             // 
@@ -676,7 +698,7 @@
             buttonStatisticItem.BackColor = Color.PeachPuff;
             buttonStatisticItem.Font = new Font("Showcard Gothic", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             buttonStatisticItem.ForeColor = SystemColors.MenuHighlight;
-            buttonStatisticItem.Location = new Point(729, 40);
+            buttonStatisticItem.Location = new Point(701, 46);
             buttonStatisticItem.Name = "buttonStatisticItem";
             buttonStatisticItem.Size = new Size(247, 67);
             buttonStatisticItem.TabIndex = 1;
@@ -693,6 +715,24 @@
             dataGridViewItem.Size = new Size(1624, 945);
             dataGridViewItem.TabIndex = 0;
             dataGridViewItem.CellValueChanged += dataGridViewItem_CellValueChanged;
+            // 
+            // label15
+            // 
+            label15.AutoSize = true;
+            label15.Location = new Point(524, 66);
+            label15.Name = "label15";
+            label15.Size = new Size(78, 41);
+            label15.TabIndex = 5;
+            label15.Text = "Start";
+            // 
+            // label16
+            // 
+            label16.AutoSize = true;
+            label16.Location = new Point(1068, 65);
+            label16.Name = "label16";
+            label16.Size = new Size(68, 41);
+            label16.TabIndex = 6;
+            label16.Text = "End";
             // 
             // Form1
             // 
@@ -719,6 +759,7 @@
             groupBox4.PerformLayout();
             tabPage3.ResumeLayout(false);
             groupBox5.ResumeLayout(false);
+            groupBox5.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridViewItem).EndInit();
             ResumeLayout(false);
         }
@@ -781,5 +822,9 @@
         private GroupBox groupBox6;
         private RichTextBox richTextBoxOverall;
         private RichTextBox richTextBoxStatistic;
+        private DateTimePicker dateTimePickerEnd;
+        private DateTimePicker dateTimePickerStart;
+        private Label label16;
+        private Label label15;
     }
 }
