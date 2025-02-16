@@ -388,7 +388,8 @@ namespace Suvella
             richTextBoxOrderDetails.Clear();
             SummarizeOrdersInfo();
             richTextBoxOverall.Text += "\n\n\n============================\n\n";
-            richTextBoxOverall.Text += "- Saved a new order of " + currentOrder.Customer.Name; 
+            richTextBoxOverall.Text += "- Saved a new order of " + currentOrder.Customer.Name;
+            RemoveOrder();
         }
         private void completeCurrentOrder()
         {
@@ -485,7 +486,7 @@ namespace Suvella
                 MessageBox.Show("Order saved successfully!");
             }
         }
-        private void buttonRemoveOrder_Click(object sender, EventArgs e)
+        private void RemoveOrder()
         {
             InitializeCurrentOrder();
 
@@ -494,8 +495,6 @@ namespace Suvella
             textBoxQuantity.Text = "1";
             textBoxPrice.Clear();
             richTextBoxToPay.Clear();
-
-            MessageBox.Show("Order removed successfully!");
         }
         private void buttonSaveNewCustomer_Click(object sender, EventArgs e)
         {
@@ -798,19 +797,31 @@ namespace Suvella
                     {
                         var order = listOrders[row - 2]; // Map rows to orders list
 
-                        // Update the order status and payment status in the Excel sheet
-                        worksheet.Cells[row, 9].Value = order.OrderStatus; // Order Status is in column 9
-                        worksheet.Cells[row, 8].Value = order.PaymentStatus; // Payment Status is in column 8
-                        worksheet.Cells[row, 5].Value = order.ShippingAddress; // Shipping Address is in column 5
-                        worksheet.Cells[row, 6].Value = order.ShippingTime.ToString("dd/MM/yyyy"); // Shipping Time is in column 6
-                        worksheet.Cells[row, 7].Value = order.FinalPayment; // Final Payment is in column 7
-                        worksheet.Cells[row, 12].Value = order.Discount; // Discount is in column 12
-                        worksheet.Cells[row, 10].Value = order.Feedback; // Feedback is in column 10
-                        worksheet.Cells[row, 11].Value = order.Note; // Order Note is in column 11
+                        // Update Customer Information (assuming customer info is in the first few columns)
+                        worksheet.Cells[row, 1].Value = order.Customer.Name; // Name in column 1
+                        worksheet.Cells[row, 2].Value = order.Customer.Phone; // Phone in column 2
+                        worksheet.Cells[row, 3].Value = order.Customer.Address; // Address in column 3
 
-                        // For the items, you may want to format the order items into a string format for saving
+                        // Items: Format the order items into a string for saving
                         string itemsInfo = string.Join("\n", order.OrderItems.Select(item => $"{item.ItemName}: {item.Quantity}"));
                         worksheet.Cells[row, 4].Value = itemsInfo; // Items in column 4
+
+                        // Shipping Information
+                        worksheet.Cells[row, 5].Value = order.ShippingAddress;  // Shipping Address in column 5
+                        worksheet.Cells[row, 6].Value = order.ShippingTime.ToString("dd/MM/yyyy");  // Shipping Time in column 6
+
+                        // Payment Information
+                        worksheet.Cells[row, 7].Value = order.FinalPayment;  // Final Payment in column 7
+                        worksheet.Cells[row, 8].Value = order.PaymentStatus; // Payment Status in column 8
+
+                        // Order Information
+                        worksheet.Cells[row, 9].Value = order.OrderStatus; // Order Status in column 9
+                        worksheet.Cells[row, 10].Value = order.Feedback;   // Feedback in column 10
+                        worksheet.Cells[row, 11].Value = order.Note;       // Order Note in column 11
+                        worksheet.Cells[row, 12].Value = order.Discount;   // Discount in column 12
+
+                        // Order Time (assuming Order Time is part of the Order)
+                        worksheet.Cells[row, 13].Value = order.OrderTime.ToString("dd/MM/yyyy"); // Order Time in column 13
                     }
 
                     // Save the changes to the Excel file
@@ -822,6 +833,7 @@ namespace Suvella
                 MessageBox.Show("Error saving orders: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
         private void sortingByShippingTime()
         {
             filteredOrders = orders.OrderBy(order => order.ShippingTime).ToList();

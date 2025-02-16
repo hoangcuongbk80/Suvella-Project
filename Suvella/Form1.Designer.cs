@@ -51,7 +51,6 @@
             label13 = new Label();
             richTextBoxToPay = new RichTextBox();
             buttonSaveOrder = new Button();
-            buttonRemoveOrder = new Button();
             label1 = new Label();
             comboBoxItems = new ComboBox();
             groupBox1 = new GroupBox();
@@ -310,25 +309,13 @@
             // 
             buttonSaveOrder.BackColor = Color.Lime;
             buttonSaveOrder.Font = new Font("Algerian", 9.900001F, FontStyle.Bold | FontStyle.Italic);
-            buttonSaveOrder.Location = new Point(114, 1004);
+            buttonSaveOrder.Location = new Point(304, 1004);
             buttonSaveOrder.Name = "buttonSaveOrder";
             buttonSaveOrder.Size = new Size(285, 58);
             buttonSaveOrder.TabIndex = 31;
             buttonSaveOrder.Text = "Save Order";
             buttonSaveOrder.UseVisualStyleBackColor = false;
             buttonSaveOrder.Click += buttonSaveOrder_Click;
-            // 
-            // buttonRemoveOrder
-            // 
-            buttonRemoveOrder.BackColor = Color.LightCoral;
-            buttonRemoveOrder.Font = new Font("Algerian", 9.900001F, FontStyle.Bold | FontStyle.Italic);
-            buttonRemoveOrder.Location = new Point(483, 1004);
-            buttonRemoveOrder.Name = "buttonRemoveOrder";
-            buttonRemoveOrder.Size = new Size(330, 58);
-            buttonRemoveOrder.TabIndex = 32;
-            buttonRemoveOrder.Text = "Remove Order";
-            buttonRemoveOrder.UseVisualStyleBackColor = false;
-            buttonRemoveOrder.Click += buttonRemoveOrder_Click;
             // 
             // label1
             // 
@@ -495,7 +482,6 @@
             // 
             groupBox3.BackColor = Color.CadetBlue;
             groupBox3.Controls.Add(buttonSaveOrder);
-            groupBox3.Controls.Add(buttonRemoveOrder);
             groupBox3.Location = new Point(1035, 22);
             groupBox3.Name = "groupBox3";
             groupBox3.Size = new Size(929, 1094);
@@ -760,7 +746,6 @@
         private Label label13;
         private RichTextBox richTextBoxToPay;
         private Button buttonSaveOrder;
-        private Button buttonRemoveOrder;
         private Label label1;
         private ComboBox comboBoxItems;
         private GroupBox groupBox1;
